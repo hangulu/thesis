@@ -13,6 +13,8 @@ In 1986, with Thornburg v. Gingles, the Supreme Court held that in order for a p
 
 All three conditions are notoriously hard to show, given the lack of data on how people vote by race.
 
-In the 1990s and early 2000s, Professor Gary King’s ecological inference method tackled the second condition: racially polarized voting, or racial political cohesion. His technique became the standard technique for analyzing racial polarization in elections by inferring individual behavior from group-level data. However, for more than $2$ racial groups or candidates, that method hits computational bottlenecks.
+In the 1990s and early 2000s, Professor Gary King’s ecological inference method tackled the second condition: racially polarized voting, or racial political cohesion. His technique became the standard technique for analyzing racial polarization in elections by inferring individual behavior from group-level data. However, for more than 2 racial groups or candidates, that method hits computational bottlenecks.
 
 A new method of solving the ecological inference problem, using a mixture of contemporary statistical computing techniques, is demonstrated here. It is called the **Discrete Voter Model**. It can be used for multiple racial groups and candidates, and is shown to work well on randomly-generated mock election data.
+
+To completely reproduce test results on generated election data, run `methods.ipynb` in full. The requirements can be installed with the included `Pipfile`. Go [here](https://realpython.com/pipenv-guide/) or [here](https://pipenv.kennethreitz.org/en/latest/) for more information on how to use `Pipenv`.
