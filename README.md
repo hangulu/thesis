@@ -1,5 +1,5 @@
-# Thesis
-### The Racial Voting Power Gap: Analyzing Racial Gerrymandering Through Solving Ecological Inference with The Discrete Voter Model
+## The Racial Voting Power Gap
+### Analyzing Racial Gerrymandering Through Solving Ecological Inference with The Discrete Voter Model
 
 Hakeem Angulu's undergraduate thesis for the departments of Computer Science and Statistics at Harvard College.
 
