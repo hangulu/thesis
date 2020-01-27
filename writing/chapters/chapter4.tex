@@ -1,0 +1,36 @@
+%!TEX root = ../dissertation.tex
+\begin{savequote}[75mm]
+Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
+\qauthor{Quoteauthor Lastname}
+\end{savequote}
+
+\chapter{Discussion}
+
+The results presented in Table \ref{table:results} show three primary trends:
+
+\begin{enumerate}
+  \item the Discrete Voter Model performs nearly as well as, but a little worse than, King's Ecological Inference in the $2 \times 2$ case (two demographic groups and two candidates)
+  \item the Discrete Voter Model is remarkably faster than King's Ecological Inference in the $2 \times 2$ case (two demographic groups and two candidates)
+  \item unlike King's EI, the Discrete Voter Model can produce reliable results for the $3 \times 2$ case (three demographic groups and two candidates)
+\end{enumerate}
+
+The Discrete Voter Model was limited to $200$ steps, with a hypercube granularity of $10$ (that is, each dimension of the cube went from $0$ to $9$). Further testing corroborates the theory that, generally, with more iterations, Markov chain Monte Carlo converges to the true distribution. Hence, allowing DVM to run longer may increase the accuracy of the model, at the expense of runtime.
+
+With that said, DVM was able to use those $200$ steps to perform comparably to King's EI in the $2 \times 2$ cases. This also corresponded to a lower runtime than King's EI in all cases, which is a testament to improvements in computing power and algorithms.
+
+DVM was also able to do what King's EI cannot in any amount of time: run on the larger $3 \times 2$ tables. Higher dimensional tables are also possible with DVM, with no changes to the statistical theory or implementation.
+
+If King's EI is taken to be a standard method, as it has been by some courts, DVM's performance on these generated elections show that it is a good contender. Not only does it perform comparably, but:
+
+\begin{itemize}
+  \item it is inherently extensible and can be tuned. Generally, at the expense of time:
+  \begin{itemize}
+    \item one can increase the number of iterations to get closer to the true distribution
+    \item one can increase the size of the hypercube to get more granular estimates for the racial voting patterns
+  \end{itemize}
+  \item it can produce visualizations of more complex voting pattern distributions
+\end{itemize}
+
+The Discrete Voter Model leverages the power of discretization and Markov chain Monte Carlo to provide more expressive models within a more malleable and sound structure. Its flexibility has been shown on generated election data, and improvements continue to be made to its speed.
+
+As Jim Greiner said: "Racial bloc voting, often a hotly contested issue in an "ordinary" redistricting dispute, may now become even more so, and as a result, using the best methodology is more critical."\cite{greiner} The Discrete Voter Model, as presented here and in future iterations, is a direct response to the need for more flexible and robust methods in the redistricting and voting rights space.

@@ -1,0 +1,147 @@
+%!TEX root = ../dissertation.tex
+\begin{savequote}[75mm]
+This is some random quote to start off the chapter.
+\qauthor{Firstname lastname}
+\end{savequote}
+
+\chapter{Methods}
+
+All of the methods discussed are implemented in Python, and can be found in the repository noted in the \hyperref[sec:appendix]{appendix}.
+
+The Discrete Voter Model can be divided into $5$ subroutines, each discussed below:
+
+\begin{enumerate}
+  \item \texttt{make\_grid}: create a probabilistic hypercube: an $\mathbf{R}^n$ array of values, $\omega$, that all sum to $1$
+  \item \texttt{shift\_weight}: shift weight in a hypercube reversibly
+  \item \texttt{expec\_votes}: given a hypercube, a candidate, and a district description, output the expectation of votes that candidate received
+  \item \texttt{prob\_votes}: given a hypercube, a candidate, a district description, and the observed vote outcomes, output the probability of seeing that outcome
+  \item \texttt{mcmc}: run a Markov Chain Monte Carlo method on a state space of hypercubes
+\end{enumerate}
+
+
+\texttt{make\_grid}
+
+
+The \texttt{make\_grid} subroutine starts the discretization by initializing an $R^n$ space as a probabilistic hypercube (or grid in the $2$-dimensional case), where $n$ is the number of demographic or racial groups in the electorate.
+
+This hypercube represents the probability distribution of the voting patterns of different demographic groups in a precinct. Each cell in the hypercube corresponds to some collection of $b_i$, the unobserved quantity of interest from King's specification and the necessary quantity for determining racially polarized voting. The cell itself contains the probability of it being the collection that produced the observed outcomes.
+
+The following four subroutines support and implement the MCMC section of the Discrete Voter Model.
+
+
+\texttt{shift\_weight}
+
+
+The \texttt{shift\_weight} subroutine implements the proposal step of the MCMC method. It reversibly shifts the weight of the hypercube to create another hypercube. \textit{Reversibility} refers to an assumption of MCMC that guarantees convergence. A Markov chain is said to be reversible if there is a probability distribution, $\pi$, over the states such that:
+
+$$\pi_i \text{Pr}(X_{n+1} = j | X_n = i) = \pi_j \text{Pr}(X_{n+1} = i | X_n = j)$$
+
+for all iterations $n$ and all states $i$ and $j$. This is also called the \textit{detailed balance} condition.
+
+\texttt{shift\_weight} allows for $5$ types of shifting:
+
+\begin{enumerate}
+  \item \texttt{uniform}: add a uniform random hypercube to the hypercube
+  \item \texttt{single\_uniform}: add a single uniform random variable to each cell in the hypercube
+  \item \texttt{shuffle}: shuffle the hypercube randomly
+  \item \texttt{right}: shift weight in the hypercube to the right
+  \item \texttt{left}: shift weight in the hypercube to the left
+\end{enumerate}
+
+Each of the above types of shifting is reversible, with the \texttt{uniform} as the default method. At each step of the chain, the algorithm uses this subroutine to propose a new hypercube.
+
+
+\texttt{expec\_votes}
+
+
+This is the first of two subroutines that score a candidate hypercube in every step of the Markov chain.
+
+\texttt{expec\_votes} calculates the expectation of votes for a given candidate from some probabilistic hypercube.
+
+The subroutine iterates over every cell in the hypercube and finds the expectation of votes that it dictates.
+
+The notation is as follows:
+
+\begin{itemize}
+  \item $i = 0, 1, \dots, n$ represents cells in the hypercube
+  \item $p_i$ represents the probability of being in cell $i$
+  \item $j = 0, 1, \dots, r$ represents demographic groups
+  \item $q_j$ represents the probability of demographic group $j$ to vote for the given candidate
+  \item $m_j$ represents the population of demographic group $j$ in the district
+\end{itemize}
+
+The expectation of a hypercube is thus given by Equation \ref{eq:expec_votes}.
+
+\begin{equation}
+ \sum_{i = 0}^n p_i \left(\sum_{j = 0}^r q_j \cdot m_j\right)
+ \label{eq:expec_votes}
+\end{equation}
+
+This expectation is then compared to the observed outcome of votes, with the $L1$-norm (absolute value). The lower the norm, the better the hypercube, and the more likely it will be accepted in the Markov chain.
+
+
+\texttt{prob\_votes}
+
+
+The is the second of two subroutines that score a candidate hypercube in every step of the Markov chain.
+
+\texttt{prob\_votes} calculates the probability that a given hypercube produced the observed election outcome.
+
+With the same notation as \texttt{expec\_votes}, and additionally:
+
+\begin{itemize}
+  \item $a_j$ represents the number of people in demographic group $j$ that voted for a candidate
+  \item $d$ represents the observed number of votes cast for the given candidate
+\end{itemize}
+
+\begin{equation}
+ \sum_{\forall a_j \text{ s.t. } \sum_{\forall j \in [0, r]} a_j = d} \left(\prod_{j = 0}^r q_j^{a_j} \cdot (1 - q_j)^{m_j - a_j}\right) \cdot \frac{d!}{\prod_{a_j}a_j!}
+ \label{eq:prob_votes}
+\end{equation}
+
+In essence, Equation \ref{eq:prob_votes} uses the Binomial distribution to calculate the probability of members of different demographic groups voting together in a way to produce the desired outcome. This is extensible to any number of demographic groups and can be repeated for any number of candidates.
+
+A crucial step in this process is generating all possible partitions of the observed electoral outcome into the demographic groups. For example, if $10$ people voted for a candidate, if there are three demographic groups, possible partitions include:
+
+\begin{itemize}
+  \item $4$ people from group $1$, $3$ people from group $2$, and $3$ people from group $3$ voted for the candidate
+  \item $2$ people from group $1$, $0$ people from group $2$, and $8$ people from group $3$ voted for the candidate
+  \item $4$ people from group $1$, $4$ people from group $2$, and $2$ people from group $3$ voted for the candidate
+\end{itemize}
+
+The code for this partitioning process can be found in the appendix, as Listing \ref{lst:integer_partition}.
+
+The probability of some candidate hypercube producing the electoral outcome given by that expression is then compared to the probability that the current hypercube produced the outcome, and the candidate is accepted if the probability is higher, or with some acceptance probability if lower.
+
+
+\texttt{mcmc}
+
+
+The final subroutine, \texttt{mcmc}, runs the Markov chain Monte Carlo method with the Metropolis-Hastings algorithm, employing either \texttt{expec\_votes} or \texttt{prob\_votes} to score candidates.
+
+The algorithm is as follows:
+
+\begin{enumerate}
+  \item initialize some hypercube with \texttt{make\_grid}
+  \item iterate some number of times. at each iteration:
+  \begin{enumerate}
+    \item generate a candidate hypercube \\ with \texttt{shift\_weight}
+    \item score that candidate with \\ \texttt{expec\_votes} or \texttt{prob\_votes}
+    \item accept (assign it as the current hypercube and record the score) or reject that candidate based on the scores in the previous step
+    \item if the score is better than all scores seen up until this point, save the score and the hypercube
+  \end{enumerate}
+  \item output all hypercubes explored, and identify the best scoring one
+\end{enumerate}
+
+The subroutine returns a collection of the best scoring hypercube, the highest score it received, and a list of all the hypercubes explored and their scores.
+
+
+\newthought{Evaluation}
+
+All of the methods for inferring racially polarized voting noted above, including ecological regression, homoegenous precincts, and King's EI, are necessarily imperfect -- as is the Discrete Voter Model. The extent of that imperfection, however, can be evaluated and compared.
+
+King's EI and the Discrete Voter Model are evaluated in this paper in two ways: accuracy and runtime. Both models are run on generated election data with different demographic distributions. The evaluation is only possible because with this generated election data, the ground truth, that is: the true demographic voting patterns, is known. That ground truth is fixed as an input in the \texttt{generate\_random\_election} subroutine, whose Python implementation can be found in Listing \ref{lst:election}.
+
+The accuracy of the model is determined by how close the model's result is to the ground truth. The runtime of the model is how long it took the model to reach that result. Both are critically important to the model's use in practice.
+
+DVM's runtime and accuracy are scored in comparison to King's EI for $2 \times 2$ examples, and demonstrations of its use on $R \times C$ examples are given in the \hyperref[sec:results]{Results} section.

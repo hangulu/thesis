@@ -1,0 +1,36 @@
+%!TEX root = ../dissertation.tex
+\chapter{Introduction}
+\label{introduction}
+
+\newthought{The Voting Rights Act} of 1965 (VRA)\cite{vra} was the result of decades of activism and advocacy around unencumbered suffrage in the United States. Specifically, this act was meant to “enforce the fifteenth amendment to the constitution,” which was ratified 95 years prior, and came after African Americans in the South protested the tremendous obstacles to voting they encountered, including poll taxes, literacy tests, harassment, intimidation, physical violence, and other systemic and infrastructural facets of the practical application of the right to vote. The United States Department of Justice has cited it as “the single most effective piece of civil rights legislation ever passed by Congress.”\cite{effective}
+
+Section 2 of that act specifically prohibits any jurisdiction in the nation from implementing any “voting qualification or prerequisite to voting or standard, practice, or procedure...which results in a denial or abridgment of the right of any citizen of the United States to vote on account of race or color.” Today an often challenged voting procedure is the drawing of political districts themselves, on the grounds that gerrymandering dilutes the effectiveness of the vote.
+
+However, quantifying the effects of voting standards on racial groups is notoriously difficult, and both Congress and the Supreme Court have attempted to set aside rules to prove that voting standards that sound neutral have racially disparate effects.
+
+In Thornburg v. Gingles (1986)\cite{thornburg}, the Court established that plaintiffs needed to show that:
+
+\begin{enumerate}
+ \item the racial or language minority group is sufficiently numerous and compact to form a majority in a single-member district
+ \item that group is politically cohesive
+ \item and the majority votes sufficiently as a bloc to enable it to defeat the minority’s preferred candidate
+\end{enumerate}
+
+This amounts to two kinds of evidence, now known colloquially as the Gingles Test, needed to successfully prove a violation of the Voting Rights Act:
+
+\begin{enumerate}
+ \item the geographic conditions to draw an effective district
+ \item racial polarization that blocks the will of minority voters
+\end{enumerate}
+
+The racially polarized voting test requires showing that a marginalized racial group is \textit{politically cohesive}, and that the “majority votes sufficiently as a bloc to enable it to usually defeat the minority’s preferred candidate.” Both of these are uniquely hard to show given the secret ballot; that is, all voter choices in an election are anonymous. Thus, it is impossible to access the ground truth about how racial groups in the majority and minority vote.
+
+However, statistical methods, most notably King’s Ecological Inference (EI)\cite{king1999}, exist to infer that information from publicly available data.
+
+EI was pioneered in the 1990s and 2000s by Harvard Professor Gary King, and it became the standard technique for attempting to analyze racial polarization in elections in service of mounting VRA litigation. As King himself billed EI, it is “the process of learning about discrete individual-level behavior by analyzing data on groups”\cite{king1999}.
+
+From only the aggregate vote counts and race breakdown, EI produces inferred candidate preferences for each racial group. This is important because the courts that litigate VRA cases do not accept data from non-public sources. Often, this means that the only data that plaintiffs have to bring forward are Census data and election results.
+
+One method of solving the Ecological Inference problem is King's own Ecological Inference method which hinges on Binomial-Beta hierarchical models for Bayesian inference. As a point of departure, this paper explores a new way of providing data to the hierarchical model pipeline: by discretizing the whole parameter space of possible vote outcomes. With this discretized space, one can replace the limited Beta class of distributions with a much more flexible description of voter behavior. This new method for solving the Ecological Inference problem, the \textit{discrete voter model} (DVM), was not computationally tractable in the 1990s and early 2000s, but is now, due to advances in algorithm design and computing power.
+
+While gerrymandering is difficult to prove, it is clear that it is one of the most pressing contemporary voting rights problems. The nation’s electorate, and thus the integrity of the democracy, has to constantly contend with confusing and dilutive maps that are drawn by people, parties, and agencies with specific agendas. It is important that the methods for analyzing redistricting are constantly updated and improved with new knowledge and computing power. Additionally, it is critical that activists, potential plaintiffs, and members of various affected communities all have the ability to quickly and intuitively synthesize the work of mathematicians, statisticians, geographers, political scientists, and other key stakeholders towards resolving this longstanding and nearly intractable problem.
