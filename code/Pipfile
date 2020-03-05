@@ -10,6 +10,11 @@ numpy = "*"
 pymc3 = "*"
 pandas = "*"
 tqdm = "*"
+tensorflow-probability = "*"
+tensorflow = "*"
+ipykernel = "*"
+seaborn = "*"
+ipywidgets = "*"
 
 [requires]
 python_version = "3.7"
