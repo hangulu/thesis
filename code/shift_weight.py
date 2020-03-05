@@ -4,18 +4,24 @@ for ecological inference.
 """
 
 import numpy as np
+import tensorflow as tf
 
 def right_shift(grid, epsilon):
     """
     Shift weight to the right in a probabilistic hypercube.
 
-    grid (NumPy array): the probabilistic hypercube to be shifted
+    flat_grid (NumPy array): the probabilistic hypercube to be shifted
     epsilon (float): the value to increase the right hypercube shift by
+    dim (tuple): the dimensons of the grid
 
     return: a probabilistic hypercube
     """
-    grid_shift = (1 / grid.size) * epsilon
-    rolled = np.roll(grid, 1, axis=1)
+#     grid = tf.reshape(flat_grid, dim)
+    print(grid.dtype)
+    grid_shift = tf.cast((1 / tf.size(grid)) * epsilon, tf.float32)
+    print(grid_shift.dtype)
+    rolled = tf.roll(grid, 1, axis=1)
+    print(rolled.dtype)
     return (grid + (rolled + grid_shift) - (grid - grid_shift)) / 3
 
 
@@ -25,11 +31,13 @@ def left_shift(grid, epsilon):
 
     grid (NumPy array): the probabilistic hypercube to be shifted
     epsilon (float): the value to increase the left hypercube shift by
+    dim (tuple): the dimensions of the grid
 
     return: a probabilistic hypercube
     """
-    grid_shift = (1 / grid.size) * epsilon
-    rolled = np.roll(grid, -1, axis=1)
+#     grid = tf.reshape(flat_grid, dim)
+    grid_shift = tf.cast((1 / tf.size(grid)) * epsilon, tf.float32)
+    rolled = tf.roll(grid, -1, axis=1)
     return (grid + (rolled + grid_shift) - (grid - grid_shift)) / 3
 
 
@@ -41,7 +49,7 @@ def shuffle_grid(grid):
 
     return: a probabilistic hypercube
     """
-    np.random.shuffle(grid)
+    tf.random.shuffle(grid)
     return grid
 
 
@@ -53,8 +61,8 @@ def add_single_uniform_to_grid(grid):
 
     return: a probabilistic hypercube
     """
-    new_grid = grid + np.random.uniform()
-    return new_grid / new_grid.sum()
+    new_grid = grid + tf.random.uniform(grid.shape)
+    return new_grid / tf.math.reduce_sum(new_grid)
 
 
 def add_uniform_to_grid(grid):
@@ -65,8 +73,8 @@ def add_uniform_to_grid(grid):
 
     return: a probabilistic hypercube
     """
-    new_grid = grid + np.random.rand(*grid.shape)
-    return new_grid / new_grid.sum()
+    new_grid = grid + tf.random.uniform(grid.shape)
+    return new_grid / tf.math.reduce_sum(new_grid)
 
 
 def shift_weight(grid, shift_type="uniform", epsilon=1):

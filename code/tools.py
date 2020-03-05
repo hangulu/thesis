@@ -4,6 +4,7 @@ inference.
 """
 
 from itertools import chain, permutations
+import tensorflow as tf
 
 def integer_partition(n, k, min_size=0):
     """
@@ -52,7 +53,7 @@ def get_vote_pcts(index, matrix_dim, demo):
     return: a dict of the vote percentages for each demographic
     group
     """
-    return {group: (index[num] + 0.5) / matrix_dim for num, group in enumerate(demo)}
+    return {group: (tf.cast(index[num], tf.float32) + 0.5) / matrix_dim for num, group in enumerate(demo)}
 
 def generate_random_election(candidates, demo, beta):
     """

@@ -4,6 +4,7 @@ for ecological inference.
 """
 
 import numpy as np
+import tensorflow as tf
 
 def get_vote_outcome(flat_index, grid, demo, print_stats=False):
     """
@@ -54,7 +55,7 @@ def expec_votes(grid, demo, print_all_stats=False):
 
     return: the expectation for the vote outcomes over the grid
     """
-    probs = grid.flatten()
+    probs = tf.reshape(grid, [-1])
     outcomes = []
     for flat_index, prob in enumerate(probs):
         # Set up printing

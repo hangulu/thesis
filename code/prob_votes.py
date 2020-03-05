@@ -1,11 +1,19 @@
 """
-This module implements the prob_votes subroutine for the Discrete Voter Model 
+This module implements the prob_votes subroutine for the Discrete Voter Model
 for ecological inference.
 """
 
 import numpy as np
-from tools import integer_partition, get_vote_pcts
+import math
+import tensorflow as tf
+from tools import integer_partition, get_vote_pcts, permute_integer_partition
+import scipy.special
+from tqdm import tqdm, trange
 
+def factorial(x):
+    return tf.exp(tf.math.lgamma(float(x) + 1))
+
+@tf.function
 def get_vote_probability(flat_index, grid, demo, observed):
     """
     Find the probability of a grid's cell producing a
@@ -22,7 +30,7 @@ def get_vote_probability(flat_index, grid, demo, observed):
     return: the probability that a cell produced the observed outcome
     """
     # Find the corresponding index
-    index = np.unravel_index(flat_index, grid.shape)
+    index = tf.unravel_index(flat_index, grid.shape)
     matrix_dim = grid.shape[0]
 
     # Find the vote percentages for each demographic group
@@ -30,7 +38,7 @@ def get_vote_probability(flat_index, grid, demo, observed):
 
     # Find the probability of the outcome
     total_prob = 0
-    observed_factorial = np.math.factorial(observed)
+    observed_factorial = math.factorial(observed)
 
     # Go through the possible partitions of the vote outcome, by group
     for p in permute_integer_partition(observed, len(demo)):
@@ -54,10 +62,11 @@ def get_vote_probability(flat_index, grid, demo, observed):
 
             prob *= group_factor
 
-        factorial_list = np.asarray([np.math.factorial(votes) for votes in partition.values()])
-        coefficient = observed_factorial / np.prod(factorial_list)
+#         factorial_list = tf.convert_to_tensor([factorial(votes) for votes in partition.values()])
+        factorial_list = tf.convert_to_tensor(scipy.special.factorial(np.fromiter(partition.values(), dtype=float)))
+        coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
 
-        total_prob += prob * coefficient
+        total_prob += prob * tf.cast(coefficient, tf.float32)
 
     return total_prob
 
@@ -76,10 +85,34 @@ def prob_votes(grid, demo, observed):
 
     return: the probability that a grid produced the observed outcomes
     """
-    probs = enumerate(grid.flatten())
+    probs = enumerate(tf.reshape(grid, [-1]))
     grid_prob = 1
     for flat_index, prob in probs:
-        vote_prob = get_vote_probability(flat_index, grid, demo, observed)
+        vote_prob = get_vote_probability(tf.constant(flat_index), grid, demo, observed)
         grid_prob *= (1 - (vote_prob * prob))
 
     return 1 - grid_prob
+
+def flat_prob_votes(flat_grid, demo, observed, dim):
+    """
+    Find the probability that a grid produced
+    the observed number of votes that a candidate
+    received in a given election, with a given flat
+    probabilistic grid.
+
+    flat_grid (NumPy array): the flattened probabilistic grid for the precinct
+    and candidate
+    demo (dict): the demographics of the district
+    observed (int): the observed number of votes the candidate received
+    dim (tuple): the dimesions of the grid
+
+    return: the probability that a grid produced the observed outcomes
+    """
+    probs = enumerate(flat_grid)
+    shaped_grid = tf.reshape(flat_grid, dim)
+    grid_prob = 1
+    for flat_index, prob in probs:
+        vote_prob = get_vote_probability(tf.constant(flat_index), shaped_grid, demo, observed)
+        grid_prob *= (1 - (vote_prob * prob))
+
+    return tf.math.log(1 - grid_prob)

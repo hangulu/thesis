@@ -1,4 +1,10 @@
 import numpy as np
+import tensorflow as tf
+
+class Grid:
+    def __init__(self, num_groups, matrix_size, random_init=True):
+        self.num_groups = num_groups
+        self.shape = tuple([])
 
 def make_grid(num_groups, matrix_size, random=True):
     """
@@ -13,7 +19,7 @@ def make_grid(num_groups, matrix_size, random=True):
     """
     shape = tuple([matrix_size] * num_groups)
     if random:
-        matrix = np.random.rand(*shape)
+        matrix = tf.random.uniform(shape)
     else:
-        matrix = np.ones(shape)
-    return matrix / matrix.sum()
+        matrix = tf.ones(shape)
+    return matrix / tf.math.reduce_sum(matrix)
