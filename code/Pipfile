@@ -15,6 +15,7 @@ tensorflow = "*"
 ipykernel = "*"
 seaborn = "*"
 ipywidgets = "*"
+line-profiler = "*"
 
 [requires]
 python_version = "3.7"
