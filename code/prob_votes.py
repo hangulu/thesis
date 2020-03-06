@@ -9,12 +9,10 @@ import tensorflow as tf
 from tools import integer_partition, get_vote_pcts, permute_integer_partition
 import scipy.special
 from tqdm import tqdm, trange
-
-def factorial(x):
-    return tf.exp(tf.math.lgamma(float(x) + 1))
+from election import get_coefficients
 
 @tf.function
-def get_vote_probability(flat_index, grid, demo, observed):
+def get_vote_probability(flat_index, grid, demo, coeff_dict):
     """
     Find the probability of a grid's cell producing a
     vote outcome of a given election for a candidate,
@@ -24,8 +22,7 @@ def get_vote_probability(flat_index, grid, demo, observed):
     grid (NumPy array): the probabilistic grid for the precinct
     and candidate
     demo (dict): the demographics of the district
-    observed (int): the number of votes the candidate
-    received in the election
+    coeff_dict (dict): the binomial coefficients for each partition
 
     return: the probability that a cell produced the observed outcome
     """
@@ -38,10 +35,9 @@ def get_vote_probability(flat_index, grid, demo, observed):
 
     # Find the probability of the outcome
     total_prob = 0
-    observed_factorial = math.factorial(observed)
 
     # Go through the possible partitions of the vote outcome, by group
-    for p in permute_integer_partition(observed, len(demo)):
+    for p, coeff in coeff_dict.items():
         # Assign the partitioned elements to groups
         partition = dict(zip(demo.keys(), p))
 
@@ -56,22 +52,18 @@ def get_vote_probability(flat_index, grid, demo, observed):
             # If infeasible, record the infeasibility and continue
             if candidate_group_num > total_group_num:
                 prob *= 0
-                continue
+                break
 
             group_factor = (group_pct ** candidate_group_num) * ((1 - group_pct) ** (total_group_num - candidate_group_num))
 
             prob *= group_factor
 
-#         factorial_list = tf.convert_to_tensor([factorial(votes) for votes in partition.values()])
-        factorial_list = tf.convert_to_tensor(scipy.special.factorial(np.fromiter(partition.values(), dtype=float)))
-        coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
-
-        total_prob += prob * tf.cast(coefficient, tf.float32)
+        total_prob += prob * coeff
 
     return total_prob
 
 
-def prob_votes(grid, demo, observed):
+def prob_votes(grid, demo, observed, coeff_dict):
     """
     Find the probability that a grid produced
     the observed number of votes that a candidate
@@ -82,37 +74,15 @@ def prob_votes(grid, demo, observed):
     and candidate
     demo (dict): the demographics of the district
     observed (int): the observed number of votes the candidate received
+    coeff_dict (dict): the binomial coefficients for each partition
 
     return: the probability that a grid produced the observed outcomes
     """
-    probs = enumerate(tf.reshape(grid, [-1]))
-    grid_prob = 1
-    for flat_index, prob in probs:
-        vote_prob = get_vote_probability(tf.constant(flat_index), grid, demo, observed)
-        grid_prob *= (1 - (vote_prob * prob))
-
-    return 1 - grid_prob
-
-def flat_prob_votes(flat_grid, demo, observed, dim):
-    """
-    Find the probability that a grid produced
-    the observed number of votes that a candidate
-    received in a given election, with a given flat
-    probabilistic grid.
-
-    flat_grid (NumPy array): the flattened probabilistic grid for the precinct
-    and candidate
-    demo (dict): the demographics of the district
-    observed (int): the observed number of votes the candidate received
-    dim (tuple): the dimesions of the grid
-
-    return: the probability that a grid produced the observed outcomes
-    """
+    flat_grid = tf.reshape(grid, [-1])
     probs = enumerate(flat_grid)
-    shaped_grid = tf.reshape(flat_grid, dim)
     grid_prob = 1
     for flat_index, prob in probs:
-        vote_prob = get_vote_probability(tf.constant(flat_index), shaped_grid, demo, observed)
+        vote_prob = get_vote_probability(tf.constant(flat_index), grid, demo, coeff_dict)
         grid_prob *= (1 - (vote_prob * prob))
 
     return tf.math.log(1 - grid_prob)

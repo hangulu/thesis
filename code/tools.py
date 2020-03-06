@@ -94,3 +94,19 @@ def mse(a, b):
     return: a float of the MSE
     """
     return np.mean((a - b) ** 2)
+
+def normalize(grid):
+    """
+    Normalize a grid to have values between
+    0 and 1 and a sum of 1 to reflect probability.
+
+    grid (Tensor): the Tensor representation of a PHC
+
+    return: a normalized Tensor
+    """
+    numerator = tf.math.subtract(grid, tf.math.reduce_min(grid))
+    denominator = tf.math.maximum(1e-12,
+        tf.math.subtract(tf.math.reduce_max(grid), tf.math.reduce_min(grid)))
+    quotient = tf.math.divide(numerator, denominator)
+
+    return quotient / tf.math.reduce_sum(quotient)
