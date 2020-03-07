@@ -10,7 +10,9 @@ import tools
 import scipy.special
 from tqdm import tqdm, trange
 import election
+import functools
 
+@tf.function
 def get_vote_probability(flat_index, grid, demo, coeff_dict):
     """
     Find the probability of a PHC's cell producing a
@@ -31,17 +33,19 @@ def get_vote_probability(flat_index, grid, demo, coeff_dict):
     # Find the vote percentages for each demographic group
     vote_pcts = election.get_vote_pcts(index, matrix_dim, demo)
 
-    # Find the probability of the outcome
-    total_prob = 0
+    # total_prob = np.empty(len(coeff_dict), dtype=np.float32)
+    total_prob = [0] * len(coeff_dict)
 
     # Go through the possible partitions of the vote outcome, by group
-    for p, coeff in coeff_dict.items():
+    for index, (p, coeff) in enumerate(coeff_dict.items()):
         # Assign the partitioned elements to groups
         partition = dict(zip(demo.keys(), p))
 
         # Find the probability of seeing that outcome
-        prob = 1
-        for group in demo:
+        # group_factors = np.zeros(len(demo), dtype=np.float32)
+        group_factors = [0.] * len(demo)
+
+        for num, group in enumerate(demo):
             group_pct = vote_pcts[group]
             candidate_group_num = partition[group]
             total_group_num = demo[group]
@@ -49,18 +53,17 @@ def get_vote_probability(flat_index, grid, demo, coeff_dict):
             # Check if this is feasible with the current demographic
             # If infeasible, record the infeasibility and continue
             if candidate_group_num > total_group_num:
-                prob *= 0
                 break
 
-            group_factor = (group_pct ** candidate_group_num) * ((1 - group_pct) ** (total_group_num - candidate_group_num))
+            group_factor_1 = tf.math.pow(group_pct, candidate_group_num)
+            group_factor_2 = tf.math.pow(1 - group_pct, total_group_num - candidate_group_num)
+            group_factors[num] = tf.math.multiply(group_factor_1, group_factor_2)
 
-            prob *= group_factor
+        total_prob[index] = tf.math.multiply(tf.math.reduce_prod(group_factors), coeff)
 
-        total_prob += prob * coeff
+    return tf.math.reduce_sum(total_prob)
 
-    return total_prob
-
-
+@tf.function
 def prob_votes(grid, demo, observed, coeff_dict):
     """
     Find the probability that a grid produced
@@ -77,10 +80,17 @@ def prob_votes(grid, demo, observed, coeff_dict):
     """
     normalized_grid = tools.normalize(grid)
     flat_grid = tf.reshape(normalized_grid, [-1])
-    probs = enumerate(flat_grid)
-    grid_prob = 1
-    for flat_index, prob in probs:
-        vote_prob = get_vote_probability(tf.constant(flat_index), normalized_grid, demo, coeff_dict)
-        grid_prob *= (1 - (vote_prob * prob))
 
-    return tf.math.log(1 - grid_prob)
+    get_vote_prob_partial = functools.partial(
+        get_vote_probability,
+        grid=normalized_grid,
+        demo=demo,
+        coeff_dict=coeff_dict)
+
+    vote_prob = tf.map_fn(lambda x: get_vote_prob_partial(x),
+        tf.range(tf.size(flat_grid)), dtype=tf.float32)
+
+    grid_prob_complement = tf.math.reduce_prod(
+        1 - tf.math.multiply(vote_prob, flat_grid))
+
+    return tf.math.log(1 - grid_prob_complement)
