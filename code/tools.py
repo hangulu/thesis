@@ -5,6 +5,7 @@ inference.
 
 from itertools import chain, permutations
 import tensorflow as tf
+import numpy as np
 
 def integer_partition(n, k, min_size=0):
     """
@@ -52,6 +53,15 @@ def mse(a, b):
     return: a float of the MSE
     """
     return np.mean((a - b) ** 2)
+
+def find_last_finite(array, default=0):
+    rev_array = array[::-1]
+    index = np.argmax(tf.math.is_finite(rev_array))
+    last_finite = rev_array[index]
+
+    if tf.math.is_inf(last_finite):
+        return default
+    return last_finite
 
 def normalize(grid):
     """
