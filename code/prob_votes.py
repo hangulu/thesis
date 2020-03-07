@@ -33,7 +33,6 @@ def get_vote_probability(flat_index, grid, demo, coeff_dict):
     # Find the vote percentages for each demographic group
     vote_pcts = election.get_vote_pcts(index, matrix_dim, demo)
 
-    # total_prob = np.empty(len(coeff_dict), dtype=np.float32)
     total_prob = [0] * len(coeff_dict)
 
     # Go through the possible partitions of the vote outcome, by group
@@ -42,7 +41,6 @@ def get_vote_probability(flat_index, grid, demo, coeff_dict):
         partition = dict(zip(demo.keys(), p))
 
         # Find the probability of seeing that outcome
-        # group_factors = np.zeros(len(demo), dtype=np.float32)
         group_factors = [0.] * len(demo)
 
         for num, group in enumerate(demo):
