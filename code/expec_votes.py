@@ -44,7 +44,7 @@ def expec_votes(grid, demo):
 
     return: the expectation for the vote outcomes over the grid
     """
-    normalized_grid = tools.normalize(grid)
+    normalized_grid = tools.prob_normalize(grid)
     flat_grid = tf.reshape(grid, [-1])
 
     get_vote_outcome_partial = functools.partial(

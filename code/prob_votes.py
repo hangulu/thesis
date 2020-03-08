@@ -76,7 +76,7 @@ def prob_votes(grid, demo, observed, coeff_dict):
 
     return: the probability that a PHC produced the observed outcomes
     """
-    normalized_grid = tools.normalize(grid)
+    normalized_grid = tools.prob_normalize(grid)
     flat_grid = tf.reshape(normalized_grid, [-1])
 
     get_vote_prob_partial = functools.partial(

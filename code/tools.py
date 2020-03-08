@@ -1,6 +1,6 @@
 """
-This module implements tools for the Discrete Voter Model for ecological
-inference.
+This module implements general tools for the Discrete Voter Model for
+ecological inference.
 """
 
 from itertools import chain, permutations
@@ -80,6 +80,18 @@ def normalize(grid):
     numerator = tf.math.subtract(grid, tf.math.reduce_min(grid))
     denominator = tf.math.maximum(1e-12,
         tf.math.subtract(tf.math.reduce_max(grid), tf.math.reduce_min(grid)))
-    quotient = tf.math.divide(numerator, denominator)
+    return tf.math.divide(numerator, denominator)
+
+
+def prob_normalize(grid):
+    """
+    Normalize a grid to have values between
+    0 and 1 and a sum of 1 to reflect probability.
+
+    grid (Tensor): the Tensor representation of a PHC
+
+    return: a normalized Tensor
+    """
+    quotient = normalize(grid)
 
     return quotient / tf.math.reduce_sum(quotient)
