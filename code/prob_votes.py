@@ -85,7 +85,7 @@ def prob_votes(grid, demo, observed, coeff_dict):
         demo=demo,
         coeff_dict=coeff_dict)
 
-    vote_prob = tf.map_fn(lambda x: get_vote_prob_partial(x),
+    vote_prob = tf.map_fn(get_vote_prob_partial,
         tf.range(tf.size(flat_grid)), dtype=tf.float32)
 
     grid_prob_complement = tf.math.reduce_prod(
