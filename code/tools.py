@@ -63,6 +63,11 @@ def find_last_finite(array, default=0):
         return default
     return last_finite
 
+@tf.function
+def reduce_average(x, weights):
+    numerator = tf.reduce_sum(tf.math.multiply(x, weights))
+    return numerator / tf.math.reduce_sum(weights)
+
 def normalize(grid):
     """
     Normalize a grid to have values between
