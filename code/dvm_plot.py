@@ -139,13 +139,14 @@ def phc_plot_2d_dist(grid, demo, show_title=False, save=False, filename='2d_phc_
     x_smooth, y_smooth = np.mgrid[x_min : x_max : 100j, x_min : x_max : 100j]
     tick = interpolate.bisplrep(x, y, z, s=0)
     z_smooth = interpolate.bisplev(x_smooth[:, 0], y_smooth[0, :], tick)
+    z_smooth_norm = tools.normalize(z_smooth)
 
     # Draw the surface
-    surface = ax.plot_surface(x_smooth, y_smooth, z_smooth, rstride=1, cstride=1, edgecolor='none', cmap='cividis')
+    surface = ax.plot_surface(x_smooth, y_smooth, z_smooth_norm, rstride=1, cstride=1, edgecolor='none', cmap='cividis')
 
     # Configure the colorbar
     cbar = fig.colorbar(surface, shrink=0.5, aspect=10)
-    cbar.ax.set_xlabel('probability', labelpad=10)
+    cbar.ax.set_xlabel('relative probability', labelpad=10)
 
     # Configure the axes
     ax.view_init(30, 30)
