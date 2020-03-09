@@ -10,6 +10,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from matplotlib import cm
 import tensorflow as tf
 import numpy as np
+from scipy import interpolate
 
 import tools
 
@@ -107,6 +108,59 @@ def phc_plot_flat(grid, show_title=False, save=False, filename='flat_phc_plot'):
 
     if save:
         plt.savefig(f"images/{filename}.png", dpi=300)
+
+    plt.show()
+
+def phc_plot_2d_dist(grid, demo, show_title=False, save=False, filename='2d_phc_plot_dist'):
+    """
+    Plot the 3D probability distribution of a 2D PHC.
+
+    grid (Tensor): the Tensor representation of a PHC
+    demo (dict): the demographics of the district
+    show_title (bool): whether to show the title
+    save (bool): whether to save the file
+    filename (str): what to name the file
+
+    return: a plot of the probability distribution
+    """
+    # Create the meshgrid
+    np_grid = grid.numpy()
+    grid_indices = np.arange(grid.shape[0])
+    x, y = np.meshgrid(grid_indices, grid_indices)
+    z = np_grid[(x, y)]
+
+    # Configure the plot
+    fig = plt.figure(figsize=(18,12))
+    ax = fig.gca(projection='3d')
+
+    # Smooth the data
+    x_min = x.min()
+    x_max = x.max()
+    x_smooth, y_smooth = np.mgrid[x_min : x_max : 100j, x_min : x_max : 100j]
+    tick = interpolate.bisplrep(x, y, z, s=0)
+    z_smooth = interpolate.bisplev(x_smooth[:, 0], y_smooth[0, :], tick)
+
+    # Draw the surface
+    surface = ax.plot_surface(x_smooth, y_smooth, z_smooth, rstride=1, cstride=1, edgecolor='none', cmap='cividis')
+
+    # Configure the colorbar
+    cbar = fig.colorbar(surface, shrink=0.5, aspect=10)
+    cbar.ax.set_xlabel('probability', labelpad=10)
+
+    # Configure the axes
+    ax.view_init(30, 30)
+    ax.invert_xaxis()
+
+    demo_groups = list(demo)
+    ax.set_xlabel(f"{demo_groups[0]} voting index")
+    ax.set_ylabel(f"{demo_groups[1]} voting index")
+    ax.set_zlabel('probability')
+
+    if show_title:
+        plt.title('The Probability Distribution of the \nProbabilistic Hypercube')
+
+    if save:
+        plt.savefig(f"images/{filename}.png")
 
     plt.show()
 
