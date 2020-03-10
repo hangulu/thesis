@@ -8,6 +8,7 @@ import math
 import tensorflow as tf
 import scipy.special
 from tqdm import tqdm
+import numpy as np
 
 def get_vote_pcts(index, matrix_dim, demo):
     """
@@ -22,6 +23,81 @@ def get_vote_pcts(index, matrix_dim, demo):
     group
     """
     return {group: (tf.cast(index[num], tf.float32) + 0.5) / matrix_dim for num, group in enumerate(demo)}
+
+class Election:
+    """
+    An election in a district.
+
+    Attributes:
+        candidates (string list): the candidates
+        demo (dict): the demographics of the electorate
+        dvp (dict): Demographic Voting Probabilities: the theoretical voting
+        percentages of each demographic group, for each candidate
+    """
+    def __init__(self, candidates, demo, demo_vote_prob=None, mock=True):
+        # Intialize the variables
+        self.candidates = candidates
+        self.demo = demo
+        self.dvp = demo_vote_prob
+        self.outcome = None
+        self.winner = None
+        self.mock = mock
+
+        # Simulate a mock election and decide a winner
+        if mock:
+            self.simulate()
+
+    def simulate(self):
+        """
+        Simulate an election.
+        """
+        # Set up the result dictionary for the electoral outcome
+        n_groups = len(self.demo)
+        demo_vote_dict = {group: 0 for group in self.demo}
+        result = {cand: (0, demo_vote_dict) for cand in self.candidates}
+
+        # Iterate through each demographic group
+        for group in self.demo:
+            # Extract information from the DVP dictionary
+            demo_vote_frac = np.fromiter(self.dvp[group].values(), dtype=float)
+            n_voters = self.demo[group]
+
+            # Simulate each voter
+            votes = np.random.choice(self.candidates, n_voters, p=demo_vote_frac)
+            for cand in votes:
+                prev_total, prev_demo_votes = result[cand]
+                prev_demo_votes[group] += 1
+                result[cand] = prev_total + 1, prev_demo_votes
+
+        self.outcome = result
+
+        max_votes = 0
+        winning_candidate = None
+
+        for cand, ballot in result.items():
+            if ballot[0] > max_votes:
+                max_votes = ballot[0]
+                winning_candidate = [cand]
+            elif ballot[0] == max_votes and winning_candidate:
+                winning_candidate.append(cand)
+
+        self.winner = winning_candidate
+
+    def get_demo_votes(self, cand):
+        """
+        Find the demographic breakdown of a candidate's electoral result.
+
+        cand (str): the candidate
+
+        return: a Python dictionary containing the demographic breakdown of a candidate's electoral result
+        """
+        return self.outcome[cand][1]
+
+    def __repr__(self):
+        if self.mock:
+            return f"A mock election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
+            
+        return f"A real election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
 
 def generate_random_election(candidates, demo, beta):
     """
@@ -50,19 +126,3 @@ def generate_random_election(candidates, demo, beta):
             prev_breakdown[group_index] += 1
             result[vote] = prev_total + 1, prev_breakdown
     return result
-
-def get_coefficients(demo, observed):
-    coeff_dict = {}
-    observed_factorial = math.factorial(observed)
-
-    for p in tools.permute_integer_partition(observed, len(demo)):
-        # Assign the partitioned elements to groups
-        partition = dict(zip(demo.keys(), p))
-
-        factorial_list = tf.convert_to_tensor(
-            scipy.special.factorial(p), dtype=float)
-        coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
-
-        coeff_dict[p] = tf.cast(coefficient, tf.float32)
-
-    return coeff_dict
