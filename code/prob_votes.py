@@ -12,6 +12,32 @@ from tqdm import tqdm, trange
 import election
 import functools
 
+def get_coefficients(demo, observed):
+    """
+    Get the binomial coefficients for calculating the probability of a PHC
+    producing an election result.
+
+    demo (dict): the demographics of the district
+    observed (int): the number of votes a candidate got in an election
+
+    return: a Python dictionary containing the integer partitions and their
+    binomial coefficients
+    """
+    coeff_dict = {}
+    observed_factorial = math.factorial(observed)
+
+    for p in tools.permute_integer_partition(observed, len(demo)):
+        # Assign the partitioned elements to groups
+        partition = dict(zip(demo.keys(), p))
+
+        factorial_list = tf.convert_to_tensor(
+            scipy.special.factorial(p), dtype=float)
+        coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
+
+        coeff_dict[p] = tf.cast(coefficient, tf.float32)
+
+    return coeff_dict
+
 @tf.function
 def get_vote_probability(flat_index, grid, demo, coeff_dict):
     """
