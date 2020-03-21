@@ -95,3 +95,13 @@ def prob_normalize(grid):
     quotient = normalize(grid)
 
     return quotient / tf.math.reduce_sum(quotient)
+
+def get_most_probable_cell(grid):
+    """
+    Find the most probable cell in a PHC.
+
+    grid (Tensor): the Tensor representation of a PHC
+
+    return: the index of the most probable cell
+    """
+    return tf.unravel_index(np.argmax(grid), grid.shape)
