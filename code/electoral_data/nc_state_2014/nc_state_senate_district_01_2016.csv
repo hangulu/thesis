@@ -1,0 +1,97 @@
+prec_id,Bill Cook,Brownie Futrell,election
+beaufort_ABSENTEE,305,243,nc_state_senate_district_01
+beaufort_WASH4,201,203,nc_state_senate_district_01
+beaufort_PSJW3,49,252,nc_state_senate_district_01
+beaufort_AUROR,164,150,nc_state_senate_district_01
+beaufort_OS BOE,6270,5369,nc_state_senate_district_01
+beaufort_CHOCO,406,282,nc_state_senate_district_01
+beaufort_OS AUR,264,310,nc_state_senate_district_01
+beaufort_WASH1,113,234,nc_state_senate_district_01
+beaufort_SURBA,521,177,nc_state_senate_district_01
+beaufort_PANTE,271,145,nc_state_senate_district_01
+beaufort_GILEA,171,108,nc_state_senate_district_01
+beaufort_NCRK,383,130,nc_state_senate_district_01
+beaufort_PINET,348,53,nc_state_senate_district_01
+beaufort_HB,263,47,nc_state_senate_district_01
+beaufort_WDPD,316,103,nc_state_senate_district_01
+beaufort_RVRD,302,198,nc_state_senate_district_01
+beaufort_TCRK,422,189,nc_state_senate_district_01
+beaufort_OLDF,198,172,nc_state_senate_district_01
+beaufort_BELHV,206,221,nc_state_senate_district_01
+beaufort_OS CHO,676,353,nc_state_senate_district_01
+beaufort_OS BEL,519,349,nc_state_senate_district_01
+beaufort_WASHP,205,157,nc_state_senate_district_01
+beaufort_BEADM,360,90,nc_state_senate_district_01
+beaufort_WASH2,83,179,nc_state_senate_district_01
+beaufort_EDWAR,171,146,nc_state_senate_district_01
+beaufort_BLCK,138,152,nc_state_senate_district_01
+camden_SH,452,81,nc_state_senate_district_01
+camden_SM,676,188,nc_state_senate_district_01
+camden_ABSENTEE,80,33,nc_state_senate_district_01
+camden_CH,395,161,nc_state_senate_district_01
+dare_ABSENTEE,529,431,nc_state_senate_district_01
+dare_FRCO,315,156,nc_state_senate_district_01
+dare_MH,233,114,nc_state_senate_district_01
+dare_WAN,525,169,nc_state_senate_district_01
+dare_STPT,76,27,nc_state_senate_district_01
+dare_AVON,276,151,nc_state_senate_district_01
+dare_CHCA,209,168,nc_state_senate_district_01
+dare_EL,32,15,nc_state_senate_district_01
+dare_KDH,1849,1327,nc_state_senate_district_01
+dare_KTHK,1164,678,nc_state_senate_district_01
+dare_HAT,213,102,nc_state_senate_district_01
+dare_DUCK,172,149,nc_state_senate_district_01
+dare_BUX,449,209,nc_state_senate_district_01
+dare_COL,1278,808,nc_state_senate_district_01
+dare_MATO,1694,1349,nc_state_senate_district_01
+dare_NGHD,867,745,nc_state_senate_district_01
+dare_SOSH,1310,924,nc_state_senate_district_01
+dare_CURBSIDE,0,0,nc_state_senate_district_01
+currituck_ABSENTEE,226,106,nc_state_senate_district_01
+currituck_KI,476,95,nc_state_senate_district_01
+currituck_GW,150,30,nc_state_senate_district_01
+currituck_CH,805,206,nc_state_senate_district_01
+currituck_WH,191,116,nc_state_senate_district_01
+currituck_IR,305,90,nc_state_senate_district_01
+currituck_PB,983,320,nc_state_senate_district_01
+currituck_CJ,165,74,nc_state_senate_district_01
+currituck_PP,501,209,nc_state_senate_district_01
+currituck_MY,1546,348,nc_state_senate_district_01
+currituck_CB,66,36,nc_state_senate_district_01
+currituck_CI,108,26,nc_state_senate_district_01
+gates_4S,156,162,nc_state_senate_district_01
+gates_3,353,274,nc_state_senate_district_01
+gates_4N,400,165,nc_state_senate_district_01
+gates_2,310,106,nc_state_senate_district_01
+gates_ABSENTEE,58,47,nc_state_senate_district_01
+gates_5,304,139,nc_state_senate_district_01
+gates_1,209,182,nc_state_senate_district_01
+hyde_FF,106,73,nc_state_senate_district_01
+hyde_ABSENTEE,29,27,nc_state_senate_district_01
+hyde_ENG,160,88,nc_state_senate_district_01
+hyde_OS OCK,52,193,nc_state_senate_district_01
+hyde_SQ,127,55,nc_state_senate_district_01
+hyde_BM,141,17,nc_state_senate_district_01
+hyde_LL,101,120,nc_state_senate_district_01
+hyde_OS BOE,252,240,nc_state_senate_district_01
+hyde_SLAD,125,61,nc_state_senate_district_01
+hyde_OCK,75,176,nc_state_senate_district_01
+perquimans_CURBSIDE,0,0,nc_state_senate_district_01
+perquimans_BELVID,333,158,nc_state_senate_district_01
+perquimans_EAST H,266,354,nc_state_senate_district_01
+perquimans_PARKVI,714,512,nc_state_senate_district_01
+perquimans_ABSENTEE,116,48,nc_state_senate_district_01
+perquimans_WEST H,320,242,nc_state_senate_district_01
+perquimans_NICANO,108,44,nc_state_senate_district_01
+perquimans_NEW HO,986,440,nc_state_senate_district_01
+perquimans_BETHEL,1281,553,nc_state_senate_district_01
+pasquotank_NEW,362,254,nc_state_senate_district_01
+pasquotank_EAST,179,249,nc_state_senate_district_01
+pasquotank_NORTH,185,284,nc_state_senate_district_01
+pasquotank_SAL,218,73,nc_state_senate_district_01
+pasquotank_PRO,679,316,nc_state_senate_district_01
+pasquotank_NIX,451,173,nc_state_senate_district_01
+pasquotank_SOUTH,77,367,nc_state_senate_district_01
+pasquotank_ABSENTEE,250,211,nc_state_senate_district_01
+pasquotank_WEST,105,335,nc_state_senate_district_01
+pasquotank_MH,489,367,nc_state_senate_district_01

@@ -1,0 +1,300 @@
+prec_id,G. K. Butterfield,"H. Powell Dew, Jr.",J.J. Summerell,election
+bertie_SN,148,29,3,us_house_of_representatives_district_1
+bertie_ABSENTEE,89,53,5,us_house_of_representatives_district_1
+bertie_OS-POW,978,385,14,us_house_of_representatives_district_1
+bertie_OS-LOB,2624,1139,42,us_house_of_representatives_district_1
+bertie_C2,159,48,0,us_house_of_representatives_district_1
+bertie_WH,149,149,2,us_house_of_representatives_district_1
+bertie_IW,121,10,3,us_house_of_representatives_district_1
+bertie_M1,123,121,5,us_house_of_representatives_district_1
+bertie_C1,123,145,4,us_house_of_representatives_district_1
+bertie_WD,285,28,4,us_house_of_representatives_district_1
+bertie_MH,111,107,1,us_house_of_representatives_district_1
+bertie_W2,49,211,3,us_house_of_representatives_district_1
+bertie_M2,217,115,6,us_house_of_representatives_district_1
+bertie_W1,485,193,9,us_house_of_representatives_district_1
+bertie_RX,363,100,5,us_house_of_representatives_district_1
+durham_37,362,375,38,us_house_of_representatives_district_1
+durham_21,283,71,12,us_house_of_representatives_district_1
+durham_30-1,431,216,34,us_house_of_representatives_district_1
+durham_22,720,47,20,us_house_of_representatives_district_1
+durham_2,382,79,30,us_house_of_representatives_district_1
+durham_5,406,118,29,us_house_of_representatives_district_1
+durham_OS-FRONT,778,209,60,us_house_of_representatives_district_1
+durham_55-11,391,11,8,us_house_of_representatives_district_1
+durham_44,238,256,34,us_house_of_representatives_district_1
+durham_42,224,4,1,us_house_of_representatives_district_1
+durham_29,417,282,28,us_house_of_representatives_district_1
+durham_48,246,128,11,us_house_of_representatives_district_1
+durham_OS-ERL,10119,3614,387,us_house_of_representatives_district_1
+durham_8,390,40,25,us_house_of_representatives_district_1
+durham_OS-NRL,11771,6439,501,us_house_of_representatives_district_1
+durham_54,501,162,42,us_house_of_representatives_district_1
+durham_14,308,20,10,us_house_of_representatives_district_1
+durham_16,259,141,25,us_house_of_representatives_district_1
+durham_19,495,95,31,us_house_of_representatives_district_1
+durham_OS-BOE,16646,1031,341,us_house_of_representatives_district_1
+durham_OS-DTC,1403,148,53,us_house_of_representatives_district_1
+durham_ABSENTEE,3486,1126,146,us_house_of_representatives_district_1
+durham_39,313,314,27,us_house_of_representatives_district_1
+durham_38,466,221,45,us_house_of_representatives_district_1
+durham_1,194,23,10,us_house_of_representatives_district_1
+durham_20,257,31,14,us_house_of_representatives_district_1
+durham_34-1,299,90,19,us_house_of_representatives_district_1
+durham_34-2,507,108,25,us_house_of_representatives_district_1
+durham_43,412,316,37,us_house_of_representatives_district_1
+durham_OS-NJBC,2204,167,50,us_house_of_representatives_district_1
+durham_OS-DTCN,629,648,48,us_house_of_representatives_district_1
+durham_41,286,5,2,us_house_of_representatives_district_1
+durham_46,420,131,31,us_house_of_representatives_district_1
+durham_47,292,9,4,us_house_of_representatives_district_1
+durham_4,313,70,15,us_house_of_representatives_district_1
+durham_7,265,44,20,us_house_of_representatives_district_1
+durham_25,137,228,24,us_house_of_representatives_district_1
+durham_OS-IVY,3844,414,77,us_house_of_representatives_district_1
+durham_OS-ENO,12121,2943,393,us_house_of_representatives_district_1
+durham_10,244,12,8,us_house_of_representatives_district_1
+durham_45,301,306,46,us_house_of_representatives_district_1
+durham_6,271,31,16,us_house_of_representatives_district_1
+durham_3,315,86,15,us_house_of_representatives_district_1
+durham_40,263,58,15,us_house_of_representatives_district_1
+durham_24,402,295,30,us_house_of_representatives_district_1
+durham_23,566,116,29,us_house_of_representatives_district_1
+durham_9,346,116,18,us_house_of_representatives_district_1
+durham_33,0,0,0,us_house_of_representatives_district_1
+durham_OS-DUKE,6517,1077,241,us_house_of_representatives_district_1
+durham_OS-SRL,11166,1466,330,us_house_of_representatives_district_1
+durham_50,478,283,45,us_house_of_representatives_district_1
+durham_31,390,295,44,us_house_of_representatives_district_1
+durham_18,466,36,11,us_house_of_representatives_district_1
+durham_13,262,11,12,us_house_of_representatives_district_1
+durham_30-2,523,124,32,us_house_of_representatives_district_1
+durham_OS-NCCU,3636,64,53,us_house_of_representatives_district_1
+durham_55-49,344,8,6,us_house_of_representatives_district_1
+durham_17,408,24,8,us_house_of_representatives_district_1
+durham_15,263,27,10,us_house_of_representatives_district_1
+durham_12,169,11,9,us_house_of_representatives_district_1
+durham_36,428,104,18,us_house_of_representatives_district_1
+durham_OS-GETG,1098,86,33,us_house_of_representatives_district_1
+durham_52,453,54,19,us_house_of_representatives_district_1
+edgecombe_1401,57,220,6,us_house_of_representatives_district_1
+edgecombe_301,76,53,1,us_house_of_representatives_district_1
+edgecombe_1201,560,35,4,us_house_of_representatives_district_1
+edgecombe_104,253,173,12,us_house_of_representatives_district_1
+edgecombe_1101,131,204,9,us_house_of_representatives_district_1
+edgecombe_1204,263,10,2,us_house_of_representatives_district_1
+edgecombe_601,219,94,8,us_house_of_representatives_district_1
+edgecombe_CURBSIDE,16,14,2,us_house_of_representatives_district_1
+edgecombe_501,125,101,2,us_house_of_representatives_district_1
+edgecombe_701,213,115,3,us_house_of_representatives_district_1
+edgecombe_801,89,213,13,us_house_of_representatives_district_1
+edgecombe_102,359,256,14,us_house_of_representatives_district_1
+edgecombe_103,279,271,12,us_house_of_representatives_district_1
+edgecombe_401,133,67,2,us_house_of_representatives_district_1
+edgecombe_ABSENTEE,103,78,2,us_house_of_representatives_district_1
+edgecombe_1205,178,5,2,us_house_of_representatives_district_1
+edgecombe_1203,272,347,18,us_house_of_representatives_district_1
+edgecombe_1202,299,9,3,us_house_of_representatives_district_1
+edgecombe_901,113,268,15,us_house_of_representatives_district_1
+edgecombe_101,424,26,8,us_house_of_representatives_district_1
+edgecombe_1301,100,262,8,us_house_of_representatives_district_1
+edgecombe_201,226,170,6,us_house_of_representatives_district_1
+edgecombe_1001,194,181,6,us_house_of_representatives_district_1
+granville_WILT,1136,2352,188,us_house_of_representatives_district_1
+granville_EAOX,1025,375,33,us_house_of_representatives_district_1
+granville_OKHL,453,399,22,us_house_of_representatives_district_1
+granville_SALM,678,593,33,us_house_of_representatives_district_1
+granville_BERE,518,565,30,us_house_of_representatives_district_1
+granville_BTNR,1128,767,74,us_house_of_representatives_district_1
+granville_CRDM,1639,1540,115,us_house_of_representatives_district_1
+granville_ANTI,613,232,12,us_house_of_representatives_district_1
+granville_SOOX,859,185,15,us_house_of_representatives_district_1
+granville_MTEN,1229,1723,118,us_house_of_representatives_district_1
+granville_SASS,608,648,33,us_house_of_representatives_district_1
+granville_TYHO,949,1689,93,us_house_of_representatives_district_1
+granville_CORI,754,731,26,us_house_of_representatives_district_1
+granville_CRDL,919,381,42,us_house_of_representatives_district_1
+granville_WOEL,731,297,23,us_house_of_representatives_district_1
+durham_26,124,307,11,us_house_of_representatives_district_1
+durham_28,198,549,29,us_house_of_representatives_district_1
+durham_27,262,202,35,us_house_of_representatives_district_1
+durham_51,447,226,54,us_house_of_representatives_district_1
+durham_32,109,238,25,us_house_of_representatives_district_1
+gates_4S,176,132,10,us_house_of_representatives_district_1
+gates_3,299,312,16,us_house_of_representatives_district_1
+gates_4N,180,371,16,us_house_of_representatives_district_1
+gates_2,138,274,9,us_house_of_representatives_district_1
+gates_ABSENTEE,52,55,3,us_house_of_representatives_district_1
+gates_5,169,268,7,us_house_of_representatives_district_1
+gates_1,189,189,14,us_house_of_representatives_district_1
+martin_HS,87,37,1,us_house_of_representatives_district_1
+martin_CR,160,199,5,us_house_of_representatives_district_1
+martin_J,246,385,14,us_house_of_representatives_district_1
+martin_W,95,230,5,us_house_of_representatives_district_1
+martin_BG,167,485,19,us_house_of_representatives_district_1
+martin_HM,220,114,3,us_house_of_representatives_district_1
+martin_PP,46,59,2,us_house_of_representatives_district_1
+martin_ABSENTEE,110,106,6,us_house_of_representatives_district_1
+martin_GN,232,162,15,us_house_of_representatives_district_1
+martin_R2,324,166,8,us_house_of_representatives_district_1
+martin_GR,140,342,17,us_house_of_representatives_district_1
+martin_W1,356,253,15,us_house_of_representatives_district_1
+martin_R1,255,136,8,us_house_of_representatives_district_1
+martin_W2,356,210,12,us_house_of_representatives_district_1
+hertford_WN,146,55,3,us_house_of_representatives_district_1
+hertford_UN,148,123,5,us_house_of_representatives_district_1
+hertford_CM,92,108,5,us_house_of_representatives_district_1
+hertford_A1,309,168,7,us_house_of_representatives_district_1
+hertford_A2,239,192,7,us_house_of_representatives_district_1
+hertford_SJ,214,88,2,us_house_of_representatives_district_1
+hertford_OS AHOSKIE,1918,470,19,us_house_of_representatives_district_1
+hertford_ML,71,179,5,us_house_of_representatives_district_1
+hertford_BR,107,22,4,us_house_of_representatives_district_1
+hertford_HV,191,125,8,us_house_of_representatives_district_1
+hertford_CO,137,27,1,us_house_of_representatives_district_1
+hertford_M2,206,54,4,us_house_of_representatives_district_1
+hertford_OS MBORO,1353,379,15,us_house_of_representatives_district_1
+hertford_M1,382,159,10,us_house_of_representatives_district_1
+hertford_A3,275,13,2,us_house_of_representatives_district_1
+hertford_OS BOE,1142,451,19,us_house_of_representatives_district_1
+hertford_MAIL ABSENTEE,131,35,1,us_house_of_representatives_district_1
+halifax_HAL,149,54,4,us_house_of_representatives_district_1
+halifax_RR 3,118,205,7,us_house_of_representatives_district_1
+halifax_ONE-STOP HALIFAX,3830,771,45,us_house_of_representatives_district_1
+halifax_RR 9,373,142,11,us_house_of_representatives_district_1
+halifax_FAUCT,150,225,10,us_house_of_representatives_district_1
+halifax_RR 10,274,370,17,us_house_of_representatives_district_1
+halifax_ONE-STOP SCOTLAND NECK,1270,386,15,us_house_of_representatives_district_1
+halifax_HOL,801,57,15,us_house_of_representatives_district_1
+halifax_BUTWD,93,74,1,us_house_of_representatives_district_1
+halifax_RRC,205,301,14,us_house_of_representatives_district_1
+halifax_ABSENTEE,270,161,10,us_house_of_representatives_district_1
+halifax_ENF1,700,111,10,us_house_of_representatives_district_1
+halifax_RR 4,79,195,8,us_house_of_representatives_district_1
+halifax_RR 7,186,60,3,us_house_of_representatives_district_1
+halifax_LIT 1,386,122,6,us_house_of_representatives_district_1
+halifax_WEL1-2,303,105,4,us_house_of_representatives_district_1
+halifax_RR 5,94,200,4,us_house_of_representatives_district_1
+halifax_WEL 3,317,129,4,us_house_of_representatives_district_1
+halifax_RR1-2,147,140,7,us_house_of_representatives_district_1
+halifax_SN,388,130,4,us_house_of_representatives_district_1
+halifax_RR 11,218,364,13,us_house_of_representatives_district_1
+halifax_LIT 2,201,298,10,us_house_of_representatives_district_1
+halifax_HPR,188,146,4,us_house_of_representatives_district_1
+halifax_ONE-STOP ROANOKE RAPIDS,4521,3003,104,us_house_of_representatives_district_1
+halifax_CONC,92,28,5,us_house_of_representatives_district_1
+halifax_RINGW,514,48,2,us_house_of_representatives_district_1
+halifax_ENF 2,531,41,1,us_house_of_representatives_district_1
+northampton_GASTON,442,186,12,us_house_of_representatives_district_1
+northampton_WOODLA,167,92,5,us_house_of_representatives_district_1
+northampton_SEVERN,87,109,5,us_house_of_representatives_district_1
+northampton_LAKE G,110,148,3,us_house_of_representatives_district_1
+northampton_OS RICH SQUARE,653,168,10,us_house_of_representatives_district_1
+northampton_REHOBE,59,34,3,us_house_of_representatives_district_1
+northampton_RICH S,235,62,9,us_house_of_representatives_district_1
+northampton_SEABOA,180,79,5,us_house_of_representatives_district_1
+northampton_GALATI,107,107,3,us_house_of_representatives_district_1
+northampton_PENDLE,63,50,4,us_house_of_representatives_district_1
+northampton_NEWTOW,123,135,3,us_house_of_representatives_district_1
+northampton_POTECA,53,31,0,us_house_of_representatives_district_1
+northampton_JACKSO,83,70,3,us_house_of_representatives_district_1
+northampton_GARYSB,401,35,2,us_house_of_representatives_district_1
+northampton_OS LAKE GASTON,333,351,12,us_house_of_representatives_district_1
+northampton_OS OFFICE,1786,676,22,us_house_of_representatives_district_1
+northampton_MILWAU,87,91,0,us_house_of_representatives_district_1
+northampton_CREEKS,75,120,3,us_house_of_representatives_district_1
+northampton_OS GASTON,898,151,4,us_house_of_representatives_district_1
+northampton_LASKER,28,94,3,us_house_of_representatives_district_1
+northampton_CONWAY,154,235,4,us_house_of_representatives_district_1
+northampton_PLEASA,82,27,5,us_house_of_representatives_district_1
+pitt_1507B,239,271,37,us_house_of_representatives_district_1
+pitt_ABSENTEE #2,153,110,13,us_house_of_representatives_district_1
+pitt_OS WILLIS BUILDING #2,2420,1354,220,us_house_of_representatives_district_1
+pitt_1201,439,378,23,us_house_of_representatives_district_1
+pitt_OS AYDEN #2,10,9,1,us_house_of_representatives_district_1
+pitt_1509,442,319,63,us_house_of_representatives_district_1
+pitt_OS COMMUNITY SCHOOLS 2,1202,839,57,us_house_of_representatives_district_1
+pitt_OS COMMUNITY SCHOOLS 1,526,321,24,us_house_of_representatives_district_1
+pitt_OS COUNTY OFFICE 1,3107,558,73,us_house_of_representatives_district_1
+pitt_OS FARMVILLE 2,15,14,0,us_house_of_representatives_district_1
+pitt_OS FARMVILLE 1,34,9,0,us_house_of_representatives_district_1
+pitt_ABSENTEE #1,149,87,14,us_house_of_representatives_district_1
+pitt_1508B,246,229,32,us_house_of_representatives_district_1
+pitt_OS COUNTY OFFICE 2,2185,322,47,us_house_of_representatives_district_1
+pitt_OS WINTERVILLE #2,1023,762,46,us_house_of_representatives_district_1
+pitt_OS AYDEN #1,13,4,1,us_house_of_representatives_district_1
+pitt_1507,450,378,55,us_house_of_representatives_district_1
+pitt_501,132,275,10,us_house_of_representatives_district_1
+pitt_OS AG CENTER 2,690,255,19,us_house_of_representatives_district_1
+pitt_1508A,121,192,28,us_house_of_representatives_district_1
+pitt_401,423,229,15,us_house_of_representatives_district_1
+pitt_OS ECU-WILLIS BLDG 1,507,210,32,us_house_of_representatives_district_1
+pitt_OS AG CENTER 1,2533,1162,50,us_house_of_representatives_district_1
+pitt_OS WINTERVILLE #1,454,303,19,us_house_of_representatives_district_1
+pitt_1503,416,88,12,us_house_of_representatives_district_1
+pitt_101,9,25,0,us_house_of_representatives_district_1
+pitt_1501,148,10,0,us_house_of_representatives_district_1
+pitt_1506,289,149,18,us_house_of_representatives_district_1
+pitt_1512A,490,275,35,us_house_of_representatives_district_1
+pitt_1512B,314,219,28,us_house_of_representatives_district_1
+pitt_1505B,506,29,18,us_house_of_representatives_district_1
+pitt_301,564,229,19,us_house_of_representatives_district_1
+pitt_1504B,475,240,35,us_house_of_representatives_district_1
+pitt_1504A,422,57,11,us_house_of_representatives_district_1
+pitt_1505A,440,132,13,us_house_of_representatives_district_1
+vance_NV,629,250,21,us_house_of_representatives_district_1
+vance_EH1,1204,61,27,us_house_of_representatives_district_1
+vance_SH2,343,126,14,us_house_of_representatives_district_1
+vance_HTOP,367,109,10,us_house_of_representatives_district_1
+vance_NH1,1198,102,21,us_house_of_representatives_district_1
+vance_MIDD,1186,669,33,us_house_of_representatives_district_1
+vance_KITT,1229,1179,59,us_house_of_representatives_district_1
+vance_NH,1455,824,51,us_house_of_representatives_district_1
+vance_SCRK,1472,992,48,us_house_of_representatives_district_1
+vance_SH1,1001,186,22,us_house_of_representatives_district_1
+vance_CC,840,901,35,us_house_of_representatives_district_1
+vance_WH,1532,1048,53,us_house_of_representatives_district_1
+wilson_PRTO,412,490,30,us_house_of_representatives_district_1
+wilson_PRWE,219,93,5,us_house_of_representatives_district_1
+wilson_PRWQ,148,3,0,us_house_of_representatives_district_1
+wilson_CURBSIDE,0,0,0,us_house_of_representatives_district_1
+wilson_PRWN,460,19,8,us_house_of_representatives_district_1
+wilson_PRWI,253,114,10,us_house_of_representatives_district_1
+wilson_PRWB,227,12,0,us_house_of_representatives_district_1
+wilson_PRWC,305,30,3,us_house_of_representatives_district_1
+wilson_PRWA,179,38,5,us_house_of_representatives_district_1
+wilson_ABSENTEE,404,384,19,us_house_of_representatives_district_1
+wilson_PRGA,284,343,27,us_house_of_representatives_district_1
+wilson_PRWH,229,6,4,us_house_of_representatives_district_1
+wilson_PRWR,278,18,7,us_house_of_representatives_district_1
+wilson_PRWP,147,247,11,us_house_of_representatives_district_1
+wilson_PRBL,0,0,0,us_house_of_representatives_district_1
+wilson_PRWD,177,232,12,us_house_of_representatives_district_1
+wilson_PRWK,126,221,11,us_house_of_representatives_district_1
+wilson_PRSA,181,242,5,us_house_of_representatives_district_1
+wilson_PRWL,232,305,18,us_house_of_representatives_district_1
+wilson_PRWJ,342,215,29,us_house_of_representatives_district_1
+wilson_PRTA,55,111,3,us_house_of_representatives_district_1
+wilson_PRST,226,214,16,us_house_of_representatives_district_1
+wilson_PRWM,420,280,28,us_house_of_representatives_district_1
+washington_P1,167,46,7,us_house_of_representatives_district_1
+washington_SK,140,185,9,us_house_of_representatives_district_1
+washington_ABSENTEE,76,41,5,us_house_of_representatives_district_1
+washington_P2,170,47,3,us_house_of_representatives_district_1
+washington_P3,273,226,9,us_house_of_representatives_district_1
+washington_LM,354,127,5,us_house_of_representatives_district_1
+washington_SC,241,264,14,us_house_of_representatives_district_1
+warren_5,669,152,13,us_house_of_representatives_district_1
+warren_12,195,375,18,us_house_of_representatives_district_1
+warren_4,399,170,11,us_house_of_representatives_district_1
+warren_7,418,127,10,us_house_of_representatives_district_1
+warren_10,1018,237,14,us_house_of_representatives_district_1
+warren_2,261,323,25,us_house_of_representatives_district_1
+warren_3,453,233,9,us_house_of_representatives_district_1
+warren_13,263,162,7,us_house_of_representatives_district_1
+warren_11,200,64,6,us_house_of_representatives_district_1
+warren_14,768,199,22,us_house_of_representatives_district_1
+warren_6,612,200,9,us_house_of_representatives_district_1
+warren_1,327,412,21,us_house_of_representatives_district_1
+warren_8,794,86,10,us_house_of_representatives_district_1
+warren_9,235,132,10,us_house_of_representatives_district_1
