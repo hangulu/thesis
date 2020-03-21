@@ -25,7 +25,7 @@ def chain_mle(chain_results):
     chain_results (dict): Python dictionary containing the sample, the
     type of scorer, and traces of log probability and log acceptance
 
-    return: the PHC with the maximum likelihood
+    return: the PHC with the maximum likelihood and its index
     """
     index = tf.math.argmax(chain_results['log_prob_trace'])
     return tools.prob_normalize(chain_results['sample'][index]), chain_results['log_prob_trace'][index]
