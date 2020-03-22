@@ -53,8 +53,7 @@ class Election:
         """
         # Set up the result dictionary for the electoral outcome
         n_groups = len(self.demo)
-        demo_vote_dict = {group: 0 for group in self.demo}
-        result = {cand: (0, demo_vote_dict) for cand in self.candidates}
+        result = {cand: (0, {group: 0 for group in self.demo}) for cand in self.candidates}
 
         # Iterate through each demographic group
         for group in self.demo:
@@ -96,7 +95,7 @@ class Election:
     def __repr__(self):
         if self.mock:
             return f"A mock election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
-            
+
         return f"A real election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
 
 def generate_random_election(candidates, demo, beta):
