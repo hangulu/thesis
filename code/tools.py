@@ -3,9 +3,10 @@ This module implements general tools for the Discrete Voter Model for
 ecological inference.
 """
 
-from itertools import chain, permutations
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
+
+from itertools import chain, permutations
 
 def integer_partition(n, k, min_size=0):
     """
@@ -68,40 +69,40 @@ def reduce_average(x, weights):
     numerator = tf.reduce_sum(tf.math.multiply(x, weights))
     return numerator / tf.math.reduce_sum(weights)
 
-def normalize(grid):
+def normalize(phc):
     """
-    Normalize a grid to have values between
+    Normalize a probabilistic hypercube (PHC) to have values between
     0 and 1 and a sum of 1 to reflect probability.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
 
     return: a normalized Tensor
     """
-    numerator = tf.math.subtract(grid, tf.math.reduce_min(grid))
+    numerator = tf.math.subtract(phc, tf.math.reduce_min(phc))
     denominator = tf.math.maximum(1e-12,
-        tf.math.subtract(tf.math.reduce_max(grid), tf.math.reduce_min(grid)))
+        tf.math.subtract(tf.math.reduce_max(phc), tf.math.reduce_min(phc)))
     return tf.math.divide(numerator, denominator)
 
 
-def prob_normalize(grid):
+def prob_normalize(phc):
     """
-    Normalize a grid to have values between
+    Normalize a probabilistic hypercube (PHC) to have values between
     0 and 1 and a sum of 1 to reflect probability.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
 
     return: a normalized Tensor
     """
-    quotient = normalize(grid)
+    quotient = normalize(phc)
 
     return quotient / tf.math.reduce_sum(quotient)
 
-def get_most_probable_cell(grid):
+def get_most_probable_cell(phc):
     """
     Find the most probable cell in a PHC.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
 
     return: the index of the most probable cell
     """
-    return tf.unravel_index(np.argmax(grid), grid.shape)
+    return tf.unravel_index(np.argmax(phc), phc.shape)
