@@ -75,7 +75,7 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
         filename = key + '_plot'
 
     if save:
-        plt.savefig(f"images/{filname}.png", dpi=300)
+        plt.savefig(f"images/{filename}.png", dpi=300)
 
     plt.show()
 
@@ -123,8 +123,8 @@ def phc_plot_2d_dist(phc, demo, show_title=False, save=False, filename='2d_phc_p
     return: a plot of the probability distribution
     """
     # Create the meshgrid
-    np_grid = grid.numpy()
-    grid_indices = np.arange(grid.shape[0])
+    np_grid = phc.numpy()
+    grid_indices = np.arange(phc.shape[0])
     x, y = np.meshgrid(grid_indices, grid_indices)
     z = np_grid[(x, y)]
 
