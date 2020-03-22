@@ -228,8 +228,6 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     full_log_accept_trace = tf.nest.map_structure(
         lambda *chunks: tf.concat(chunks, axis=0), *log_accept_trace_chunks)
 
-    print(full_chain.shape)
-
     print(f"[{cur_alg_step}/{alg_steps}] Burning {burn_frac} of samples...")
 
     burned_chain = burn_in(full_chain, burn_frac)
