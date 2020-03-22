@@ -15,7 +15,8 @@ import phc
 import tools
 
 def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
-                  expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1):
+                  expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1,
+                  verbose=False):
     """
     Evaluate the accuracy and speed of the Discrete Voter
     Model.
@@ -32,6 +33,7 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
     burn_frac (float): the fraction of MCMC iterations to burn
     n_steps (int): the number of steps to run the MCMC for
     n_iter (int): the number of times to repeat the experiment
+    verbose (bool): whether to display loogging and progress bars
 
     return: a dictionary of the label, times and MSEs for
     the Discrete Voter Model
@@ -43,7 +45,7 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
 
     initial_phc = phc.make_phc(len(election.demo), phc_granularity)
 
-    for _ in trange(n_iter, desc="Experiment progress"):
+    for _ in trange(n_iter, desc="Experiment progress", leave=verbose):
         # Get the observed votes for the first candidate
         first_cand = election.candidates[0]
         first_cand_obs_votes = election.outcome[first_cand][0]
@@ -54,11 +56,13 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
         if hmc:
             chain_results = dvm.hmc(n_steps, burn_frac, initial_phc,
                                     election.demo, first_cand_obs_votes,
-                                    expec_scoring=expec_scoring)
+                                    expec_scoring=expec_scoring,
+                                    verbose=verbose)
         else:
             chain_results = dvm.rwm(n_steps, burn_frac, initial_phc,
                                     election.demo, first_cand_obs_votes,
-                                    expec_scoring=expec_scoring)
+                                    expec_scoring=expec_scoring,
+                                    verbose=verbose)
 
         total_time += time.time()
 
@@ -94,7 +98,7 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
 pymc3_logger = logging.getLogger('pymc3')
 pymc3_logger.setLevel(logging.CRITICAL)
 
-def kei_evaluator(election, label, n_steps=500, n_iter=1):
+def kei_evaluator(election, label, n_steps=500, n_iter=1, verbose=False):
     """
     Evaluate the accuracy and speed of King's Ecological Inference
     method.
@@ -103,6 +107,7 @@ def kei_evaluator(election, label, n_steps=500, n_iter=1):
     label (string): the label of the experiment
     n_steps (int): the number of steps to run the MCMC for
     n_iter (int): the number of times to repeat the experiment
+    verbose (bool): whether to display loogging and progress bars
 
     return: a dictionary of the label, times and MSEs for
     the Discrete Voter Model
@@ -114,7 +119,7 @@ def kei_evaluator(election, label, n_steps=500, n_iter=1):
     total_time = 0
     total_mse = 0
 
-    for _ in trange(n_iter, desc="Experiment progress"):
+    for _ in trange(n_iter, desc="Experiment progress", leave=verbose):
         # Get the observed votes for the first candidate
         first_cand = election.candidates[0]
         first_cand_obs_votes = election.outcome[first_cand][0]

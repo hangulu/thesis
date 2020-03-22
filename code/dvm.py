@@ -95,7 +95,7 @@ def burn_in(chain_result_tensor, burn_frac):
 
     return tf.slice(chain_result_tensor, begin, size)
 
-def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10):
+def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
     """
     Run the Hamiltonian Monte Carlo MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -113,6 +113,7 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     init_step_size (float): the initial step size for the transition
     adaptation_frac (float): the fraction of the burn in steps to be used for step size adaptation
     pause_point (int): the number of iterations to run in each chain chunk
+    verbose (bool): whether to display loogging and progress bars
 
     return: a Python dictionary containing the sample, the
     type of scorer, and traces of log probability and log acceptance
@@ -126,7 +127,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     num_chunks = fixed_size_steps // pause_point
     remainder = fixed_size_steps % pause_point
 
-    print(f"This Hamiltonian Monte Carlo chain will be run in {num_chunks} chunks of size {pause_point}, with {num_adaptation_steps} steps of adaptation and {remainder} steps at the end.\n")
+    if verbose:
+        print(f"This Hamiltonian Monte Carlo chain will be run in {num_chunks} chunks of size {pause_point}, with {num_adaptation_steps} steps of adaptation and {remainder} steps at the end.\n")
 
     sample_chunks = []
     log_prob_trace_chunks = []
@@ -150,7 +152,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
         alg_steps = 4
         scorer = 'prob'
 
-        print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
+        if verbose:
+            print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
         cur_alg_step += 1
         # Get the coefficients for the binomial calculations
         coeff_dict = pv.get_coefficients(demo, observed)
@@ -165,7 +168,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     # Initialize the adaptive HMC transition kernel
     adaptive_hmc_kernel = init_hmc_kernel(target_log_prob_fn, init_step_size, num_adaptation_steps)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {num_adaptation_steps} steps to adapt the step size...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {num_adaptation_steps} steps to adapt the step size...")
     cur_alg_step += 1
 
     # Run the chain with adaptive HMC to adapt the step size
@@ -189,11 +193,12 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     # Intialize the HMC transition kernel with the final step size
     hmc_kernel = init_hmc_kernel(target_log_prob_fn, adapted_step_size)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Running the chain with a step size of {adapted_step_size} on {num_chunks} chunks of {pause_point} iterations each...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Running the chain with a step size of {adapted_step_size} on {num_chunks} chunks of {pause_point} iterations each...")
     cur_alg_step += 1
 
     # Run the chain in chunks to be able to monitor progress
-    for i in trange(num_chunks):
+    for i in trange(num_chunks, leave=verbose):
         samples, (log_prob_trace, log_accept_trace, _) = sample_chain(
             adaptive_hmc_kernel,
             pause_point,
@@ -206,7 +211,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
         log_prob_trace_chunks.append(log_prob_trace)
         log_accept_trace_chunks.append(log_accept_trace)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {remainder} more steps...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {remainder} more steps...")
     cur_alg_step += 1
 
     # Run the chain for the remainder of steps
@@ -228,7 +234,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     full_log_accept_trace = tf.nest.map_structure(
         lambda *chunks: tf.concat(chunks, axis=0), *log_accept_trace_chunks)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Burning {burn_frac} of samples...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Burning {burn_frac} of samples...")
 
     burned_chain = burn_in(full_chain, burn_frac)
     burned_log_prob_trace = burn_in(full_log_prob_trace, burn_frac)
@@ -237,12 +244,13 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     elapsed = int(time.time() - start_time)
     num_samples = n_iter - int(burn_frac * n_iter)
 
-    print("Done.")
-    print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
+    if verbose:
+        print("Done.")
+        print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
     return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
 
 
-def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pause_point=10):
+def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pause_point=10, verbose=True):
     """
     Run the Random Walk Metropolis MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -258,6 +266,7 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         2. the difference in the outcome and the PHC's expectation
         (True)
     pause_point (int): the number of iterations to run in each chain chunk
+    verbose (bool): whether to display loogging and progress bars
 
     return: a Python dictionary containing the sample, the
     type of scorer, and traces of log probability and log acceptance
@@ -268,7 +277,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     num_chunks = n_iter // pause_point
     remainder = n_iter % pause_point
 
-    print(f"The Random Walk Metropolis chain will be run in {num_chunks} chunks of size {pause_point}, with {remainder} steps at the end.\n")
+    if verbose:
+        print(f"The Random Walk Metropolis chain will be run in {num_chunks} chunks of size {pause_point}, with {remainder} steps at the end.\n")
 
     sample_chunks = []
     log_prob_trace_chunks = []
@@ -292,7 +302,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         alg_steps = 4
         scorer = 'prob'
 
-        print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
+        if verbose:
+            print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
         cur_alg_step += 1
         # Get the coefficients for the binomial calculations
         coeff_dict = pv.get_coefficients(demo, observed)
@@ -307,11 +318,12 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     # Initialize the RWM transition kernel
     rwm_kernel = init_rwm_kernel(target_log_prob_fn)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Running the chain on {num_chunks} chunks of {pause_point} iterations each...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Running the chain on {num_chunks} chunks of {pause_point} iterations each...")
     cur_alg_step += 1
 
     # Run the chain in chunks to be able to monitor progress
-    for i in trange(num_chunks):
+    for i in trange(num_chunks, leave=verbose):
         samples, (log_prob_trace, log_accept_trace) = sample_chain(
             rwm_kernel,
             pause_point,
@@ -324,7 +336,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         log_prob_trace_chunks.append(log_prob_trace)
         log_accept_trace_chunks.append(log_accept_trace)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {remainder} more steps...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Running the chain for {remainder} more steps...")
     cur_alg_step += 1
 
     # Run the chain for the remainder of steps
@@ -346,7 +359,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     full_log_accept_trace = tf.nest.map_structure(
         lambda *chunks: tf.concat(chunks, axis=0), *log_accept_trace_chunks)
 
-    print(f"[{cur_alg_step}/{alg_steps}] Burning {burn_frac} of the sample...")
+    if verbose:
+        print(f"[{cur_alg_step}/{alg_steps}] Burning {burn_frac} of the sample...")
 
     burned_chain = burn_in(full_chain, burn_frac)
     burned_log_prob_trace = burn_in(full_log_prob_trace, burn_frac)
@@ -355,6 +369,7 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     elapsed = int(time.time() - start_time)
     num_samples = n_iter - int(burn_frac * n_iter)
 
-    print("Done.")
-    print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
+    if verbose:
+        print("Done.")
+        print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
     return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
