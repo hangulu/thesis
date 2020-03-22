@@ -7,13 +7,13 @@ https://gist.github.com/ColCarroll/9fb0e6714dc0369acf6549cededcc875
 import numpy as np
 import pymc3 as pm
 
-def eco_inf(prec_demos, candidate_pcts, lmbda=0.5):
+def eco_inf(prec_demos, first_cand_obs_votes, lmbda=0.5):
     """
     Run King's Ecological Inference method for the 2x2 case
     (2 demographic groups, and 2 candidates).
 
     prec_demos (list of dicts): the demographics of the precincts
-    candidate_pcts (NumPy array): the percentage of people in the
+    first_cand_obs_votes (NumPy array): the number of people in each
     precinct who voted for the first candidate
     lmbda (float): the hyperparameter for the Exponential distributions
 
@@ -27,9 +27,6 @@ def eco_inf(prec_demos, candidate_pcts, lmbda=0.5):
     first_group = list(prec_demos[0].keys())[0]
     demo_pcts = np.array([demo[first_group] for demo in prec_demos]) / total_pop
 
-    # Find the number of people who voted for the first candidate
-    demo_counts = candidate_pcts * total_pop
-
     # Find the number of precincts
     p = total_pop.size
     with pm.Model() as model:
@@ -42,5 +39,5 @@ def eco_inf(prec_demos, candidate_pcts, lmbda=0.5):
         b_2 = pm.Beta('b_2', alpha=c_2, beta=d_2, shape=p)
 
         theta = demo_pcts * b_1 + (1 - demo_pcts) * b_2
-        Tprime = pm.Binomial('Tprime', n=total_pop , p=theta, observed=demo_counts)
+        Tprime = pm.Binomial('Tprime', n=total_pop , p=theta, observed=first_cand_obs_votes)
     return model
