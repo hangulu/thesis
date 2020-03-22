@@ -4,17 +4,13 @@ Python 3.
 """
 
 import functools
-import random
+import time
 import tensorflow as tf
 import tensorflow_probability as tfp
-import time
-
 from tqdm.autonotebook import trange
 
-import make_grid
 import expec_votes as ev
 import prob_votes as pv
-import election
 import tools
 
 def chain_mle(chain_results):
@@ -99,15 +95,14 @@ def burn_in(chain_result_tensor, burn_frac):
 
     return tf.slice(chain_result_tensor, begin, size)
 
-def hmc(n_iter, burn_frac, initial_grid, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10):
+def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10):
     """
     Run the Hamiltonian Monte Carlo MCMC algorithm to sample the space
-    of probabilistic demographic grids in the discrete
-    voter model.
+    of PHCs in the discrete voter model.
 
     n_iter (int): the number of iterations to run
     burn_frac (float): the fraction of iterations to burn
-    initial_grid (Tensor): the probabilistic hypercube to start with
+    initial_phc (Tensor): the probabilistic hypercube to start with
     observed (int): the number of votes a candidate got in an election
     demo (dict): the demographics of the district
     expec_scoring (bool): whether to score by:
@@ -137,7 +132,7 @@ def hmc(n_iter, burn_frac, initial_grid, demo, observed, expec_scoring=False, in
     log_prob_trace_chunks = []
     log_accept_trace_chunks = []
 
-    current_state = initial_grid
+    current_state = initial_phc
     kernel_results = None
 
     cur_alg_step = 1
@@ -249,15 +244,14 @@ def hmc(n_iter, burn_frac, initial_grid, demo, observed, expec_scoring=False, in
     return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
 
 
-def rwm(n_iter, burn_frac, initial_grid, demo, observed, expec_scoring=False, pause_point=10):
+def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pause_point=10):
     """
     Run the Random Walk Metropolis MCMC algorithm to sample the space
-    of probabilistic demographic grids in the discrete
-    voter model.
+    of PHCs in the discrete voter model.
 
     n_iter (int): the number of iterations to run
     burn_frac (float): the fraction of iterations to burn
-    initial_grid (Tensor): the probabilistic hypercube to start with
+    initial_phc (Tensor): the probabilistic hypercube to start with
     observed_votes (int): the number of votes a candidate got in an election
     demo (dict): the demographics of the district
     expec_scoring (bool): whether to score by:
@@ -282,7 +276,7 @@ def rwm(n_iter, burn_frac, initial_grid, demo, observed, expec_scoring=False, pa
     log_prob_trace_chunks = []
     log_accept_trace_chunks = []
 
-    current_state = initial_grid
+    current_state = initial_phc
     kernel_results = None
 
     cur_alg_step = 1

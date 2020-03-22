@@ -5,12 +5,11 @@ ecological inference.
 
 import matplotlib
 import matplotlib.pyplot as plt
-import seaborn as sns
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-from matplotlib import cm
-import tensorflow as tf
 import numpy as np
 from scipy import interpolate
+import seaborn as sns
+import tensorflow as tf
 
 import tools
 
@@ -80,12 +79,12 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
 
     plt.show()
 
-def phc_plot_flat(grid, show_title=False, save=False, filename='flat_phc_plot'):
+def phc_plot_flat(phc, show_title=False, save=False, filename='flat_phc_plot'):
     """
     Plot the cells of a probabilistic hypercube in three dimensions.
     This is suitable for all types of PHCs.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
     show_title (bool): whether to show the title
     save (bool): whether to save the file
 
@@ -96,8 +95,8 @@ def phc_plot_flat(grid, show_title=False, save=False, filename='flat_phc_plot'):
     plt.gca().spines['top'].set_visible(False)
     plt.gca().spines['right'].set_visible(False)
 
-    # Plot the distribution within the grid
-    sns.distplot(grid)
+    # Plot the distribution within the PHC
+    sns.distplot(phc)
 
     # Configure the axes
     plt.ylabel('kde')
@@ -111,11 +110,11 @@ def phc_plot_flat(grid, show_title=False, save=False, filename='flat_phc_plot'):
 
     plt.show()
 
-def phc_plot_2d_dist(grid, demo, show_title=False, save=False, filename='2d_phc_plot_dist'):
+def phc_plot_2d_dist(phc, demo, show_title=False, save=False, filename='2d_phc_plot_dist'):
     """
     Plot the 3D probability distribution of a 2D PHC.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
     demo (dict): the demographics of the district
     show_title (bool): whether to show the title
     save (bool): whether to save the file
@@ -165,11 +164,11 @@ def phc_plot_2d_dist(grid, demo, show_title=False, save=False, filename='2d_phc_
 
     plt.show()
 
-def phc_plot_2d(grid, demo, show_title=False, save=False, filename='2d_phc_plot'):
+def phc_plot_2d(phc, demo, show_title=False, save=False, filename='2d_phc_plot'):
     """
     Plot the 2D probabilistic hypercube.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
     demo (dict): the demographics of the district
     show_title (bool): whether to show the title
     save (bool): whether to save the file
@@ -177,11 +176,11 @@ def phc_plot_2d(grid, demo, show_title=False, save=False, filename='2d_phc_plot'
 
     return: a plot of the PHC
     """
-    # Plot the grid
-    rows, cols = grid.shape
+    # Plot the PHC
+    rows, cols = phc.shape
     fig = plt.figure(figsize=(18, 12))
 
-    plt.imshow(grid, interpolation='nearest', extent=[0.5, 0.5 + cols, 0.5, 0.5 + rows], cmap='cividis')
+    plt.imshow(phc, interpolation='nearest', extent=[0.5, 0.5 + cols, 0.5, 0.5 + rows], cmap='cividis')
 
     # Configure the axes
     demo_groups = list(demo)
@@ -189,15 +188,15 @@ def phc_plot_2d(grid, demo, show_title=False, save=False, filename='2d_phc_plot'
     plt.ylabel(f"{demo_groups[1]} voting index")
 
     # Configure the colorbar
-    grid_min = tf.math.reduce_min(grid)
-    grid_max = tf.math.reduce_max(grid)
-    grid_range_mid = (grid_min + grid_max) / 2
+    phc_min = tf.math.reduce_min(phc)
+    phc_max = tf.math.reduce_max(phc)
+    phc_range_mid = (phc_min + phc_max) / 2
 
-    cbar_min = "{:.1e}".format(grid_min)
-    cbar_mid = "{:.1e}".format(grid_range_mid)
-    cbar_max = "{:.1e}".format(grid_max)
+    cbar_min = "{:.1e}".format(phc_min)
+    cbar_mid = "{:.1e}".format(phc_range_mid)
+    cbar_max = "{:.1e}".format(phc_max)
 
-    cbar = plt.colorbar(shrink=0.3, aspect=10, ticks=[grid_min, grid_range_mid, grid_max])
+    cbar = plt.colorbar(shrink=0.3, aspect=10, ticks=[phc_min, phc_range_mid, phc_max])
     cbar.ax.set_yticklabels([cbar_min, cbar_mid, cbar_max])
     cbar.ax.set_xlabel('probability', labelpad=10)
 
@@ -209,11 +208,11 @@ def phc_plot_2d(grid, demo, show_title=False, save=False, filename='2d_phc_plot'
 
     plt.show()
 
-def phc_plot_3d(grid, demo, show_title=False, save=False, filename='3d_phc_plot'):
+def phc_plot_3d(phc, demo, show_title=False, save=False, filename='3d_phc_plot'):
     """
     Plot the 3D probabilistic hypercube.
 
-    grid (Tensor): the Tensor representation of a PHC
+    phc (Tensor): the Tensor representation of a PHC
     demo (dict): the demographics of the district
     show_title (bool): whether to show the title
     save (bool): whether to save the file
@@ -246,24 +245,24 @@ def phc_plot_3d(grid, demo, show_title=False, save=False, filename='3d_phc_plot'
                                 facecolors=np.repeat(colors, 6, axis=0),
                                 edgecolor=colors)
 
-    def make_colors(grid, cmap_id='cividis'):
+    def make_colors(phc, cmap_id='cividis'):
         cmap = plt.get_cmap(cmap_id)
-        flat_grid = tools.normalize(tf.reshape(grid, [-1]))
-        colors = cmap(flat_grid)
-        colors[:, 3] = flat_grid
+        flat_phc = tools.normalize(tf.reshape(phc, [-1]))
+        colors = cmap(flat_phc)
+        colors[:, 3] = flat_phc
 
-        cbar = cm.ScalarMappable(cmap=plt.get_cmap(cmap_id))
+        cbar = matplotlib.cm.ScalarMappable(cmap=plt.get_cmap(cmap_id))
         cbar.set_array([])
 
         return colors, cbar
 
     # Create the cube positions
-    matrix = np.ones(grid.shape)
-    x, y, z = np.indices(grid.shape)
+    matrix = np.ones(phc.shape)
+    x, y, z = np.indices(phc.shape)
     positions = np.c_[x[matrix == 1], y[matrix == 1], z[matrix == 1]]
 
     # Create the color mapping
-    colors, cbar = make_colors(grid)
+    colors, cbar = make_colors(phc)
 
     # Plot the figure
     fig = plt.figure(figsize=(18, 12))
@@ -272,20 +271,20 @@ def phc_plot_3d(grid, demo, show_title=False, save=False, filename='3d_phc_plot'
     ax.add_collection3d(plot_cube_at(positions, colors))
 
     # Configure the colorbar
-    grid_min = tf.math.reduce_min(grid)
-    grid_max = tf.math.reduce_max(grid)
-    grid_range_mid = (grid_min + grid_max) / 2
+    phc_min = tf.math.reduce_min(phc)
+    phc_max = tf.math.reduce_max(phc)
+    phc_range_mid = (phc_min + phc_max) / 2
 
-    cbar_min = "{:.1e}".format(grid_min)
-    cbar_mid = "{:.1e}".format(grid_range_mid)
-    cbar_max = "{:.1e}".format(grid_max)
+    cbar_min = "{:.1e}".format(phc_min)
+    cbar_mid = "{:.1e}".format(phc_range_mid)
+    cbar_max = "{:.1e}".format(phc_max)
 
     drawn_cbar = plt.colorbar(cbar, shrink=0.3, aspect=10, ticks=[0, 0.5, 1])
     drawn_cbar.ax.set_yticklabels([cbar_min, cbar_mid, cbar_max])
     drawn_cbar.ax.set_xlabel('probability', labelpad=10)
 
     # Configure the axes
-    axes_lim = [0, grid.shape[-1]]
+    axes_lim = [0, phc.shape[-1]]
     ax.set_xlim(axes_lim)
     ax.set_ylim(axes_lim)
     ax.set_zlim(axes_lim)

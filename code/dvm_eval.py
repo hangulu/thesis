@@ -2,16 +2,17 @@
 This module evaluates the Discrete Voter Model for ecological inference and King's Ecological Inference.
 """
 
-import make_grid as mg
-import kings_ei as kei
-import pymc3 as pm
-import elect
-import dvm
-import tools
-import numpy as np
-import time
 import logging
+import numpy as np
+import pymc3 as pm
+import time
 from tqdm.autonotebook import trange
+
+import dvm
+import elect
+import kings_ei as kei
+import phc
+import tools
 
 def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
                   expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1):
@@ -40,7 +41,7 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
     total_mle_phc_mse = 0
     total_mean_phc_mse = 0
 
-    initial_grid = mg.make_grid(len(election.demo), phc_granularity)
+    initial_phc = phc.make_phc(len(election.demo), phc_granularity)
 
     for _ in trange(n_iter, desc="Experiment progress"):
         # Get the observed votes for the first candidate
@@ -51,17 +52,17 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
         total_time -= time.time()
 
         if hmc:
-            chain_results = dvm.hmc(n_steps, burn_frac, initial_grid,
+            chain_results = dvm.hmc(n_steps, burn_frac, initial_phc,
                                     election.demo, first_cand_obs_votes,
                                     expec_scoring=expec_scoring)
         else:
-            chain_results = dvm.rwm(n_steps, burn_frac, initial_grid,
+            chain_results = dvm.rwm(n_steps, burn_frac, initial_phc,
                                     election.demo, first_cand_obs_votes,
                                     expec_scoring=expec_scoring)
 
         total_time += time.time()
 
-        # Find the best grid
+        # Find the best PHC
         mle_phc = dvm.chain_mle(chain_results)[0]
         mean_phc = dvm.mean_phc(chain_results)
 

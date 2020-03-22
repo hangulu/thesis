@@ -3,20 +3,21 @@ This module implements subroutines for creating elections and handling their
 data.
 """
 
-import tools
 import math
-import tensorflow as tf
-import scipy.special
-from tqdm import tqdm
 import numpy as np
+import scipy.special
+import tensorflow as tf
+from tqdm import tqdm
+
+import tools
 
 def get_vote_pcts(index, matrix_dim, demo):
     """
     Find the vote percentages for each demographic group,
-    given the index of an associated probabilistic grid.
+    given the index of an associated PHC.
 
-    index (int tuple): the index of the grid
-    matrix_dim (int): the size of one dimension of the grid
+    index (int tuple): the index of the PHC
+    matrix_dim (int): the size of one dimension of the PHC
     demo (dict): the demographics of the district
 
     return: a dict of the vote percentages for each demographic
