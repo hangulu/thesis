@@ -5,12 +5,12 @@ for ecological inference.
 
 import functools
 import math
-import numpy as np
 import scipy.special
 import tensorflow as tf
 
 import elect
 import tools
+
 
 def get_coefficients(demo, observed):
     """
@@ -27,9 +27,6 @@ def get_coefficients(demo, observed):
     observed_factorial = math.factorial(observed)
 
     for p in tools.permute_integer_partition(observed, len(demo)):
-        # Assign the partitioned elements to groups
-        partition = dict(zip(demo.keys(), p))
-
         factorial_list = tf.convert_to_tensor(
             scipy.special.factorial(p), dtype=float)
         coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
@@ -37,6 +34,7 @@ def get_coefficients(demo, observed):
         coeff_dict[p] = tf.cast(coefficient, tf.float32)
 
     return coeff_dict
+
 
 @tf.function
 def get_vote_probability(flat_index, phc, demo, coeff_dict):
@@ -86,6 +84,7 @@ def get_vote_probability(flat_index, phc, demo, coeff_dict):
         total_prob[index] = tf.math.multiply(tf.math.reduce_prod(group_factors), coeff)
 
     return tf.math.reduce_sum(total_prob)
+
 
 @tf.function
 def prob_votes(phc, demo, observed, coeff_dict):

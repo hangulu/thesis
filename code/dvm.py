@@ -13,6 +13,7 @@ import expec_votes as ev
 import prob_votes as pv
 import tools
 
+
 def chain_mle(chain_results):
     """
     Find the Maximum Likelihood Estimate (MLE) of the distribution of
@@ -25,6 +26,7 @@ def chain_mle(chain_results):
     """
     index = tf.math.argmax(chain_results['log_prob_trace'])
     return tools.prob_normalize(chain_results['sample'][index]), chain_results['log_prob_trace'][index]
+
 
 def mean_phc(chain_results):
     """
@@ -39,6 +41,7 @@ def mean_phc(chain_results):
     normalized_results = tf.map_fn(
         tools.prob_normalize, chain_results['sample'])
     return tf.math.reduce_mean(normalized_results, axis=0)
+
 
 def init_hmc_kernel(log_prob_fn, step_size, num_adaptation_steps=0):
     """
@@ -58,6 +61,7 @@ def init_hmc_kernel(log_prob_fn, step_size, num_adaptation_steps=0):
         hmc_kernel,
         num_adaptation_steps=num_adaptation_steps)
 
+
 def init_rwm_kernel(log_prob_fn):
     """
     Initialize the RWM kernel.
@@ -68,11 +72,14 @@ def init_rwm_kernel(log_prob_fn):
     """
     return tfp.mcmc.RandomWalkMetropolis(log_prob_fn)
 
+
 def hmc_trace_fn(_, pkr):
     return pkr.inner_results.accepted_results.target_log_prob, pkr.inner_results.log_accept_ratio, pkr.inner_results.accepted_results.step_size
 
+
 def rwm_trace_fn(_, pkr):
     return pkr.accepted_results.target_log_prob, pkr.log_accept_ratio
+
 
 def sample_chain(kernel, n_iter, current_state, trace_fn=None):
     return tfp.mcmc.sample_chain(
@@ -81,6 +88,7 @@ def sample_chain(kernel, n_iter, current_state, trace_fn=None):
         current_state=current_state,
         kernel=kernel,
         trace_fn=trace_fn)
+
 
 def burn_in(chain_result_tensor, burn_frac):
     num_samples = chain_result_tensor.shape[0]
@@ -94,6 +102,7 @@ def burn_in(chain_result_tensor, burn_frac):
         size.append(dim)
 
     return tf.slice(chain_result_tensor, begin, size)
+
 
 def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
     """
@@ -135,7 +144,6 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     log_accept_trace_chunks = []
 
     current_state = initial_phc
-    kernel_results = None
 
     cur_alg_step = 1
 
@@ -285,7 +293,6 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     log_accept_trace_chunks = []
 
     current_state = initial_phc
-    kernel_results = None
 
     cur_alg_step = 1
 

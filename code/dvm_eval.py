@@ -1,18 +1,21 @@
 """
-This module evaluates the Discrete Voter Model for ecological inference and King's Ecological Inference.
+This module evaluates the Discrete Voter Model for ecological inference and
+King's Ecological Inference.
 """
 
 import logging
 import numpy as np
+import pandas as pd
 import pymc3 as pm
 import time
-from tqdm.autonotebook import trange
+from tqdm.autonotebook import trange, tqdm
 
 import dvm
 import elect
 import kings_ei as kei
 import phc
 import tools
+
 
 def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
                   expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1,
@@ -94,6 +97,42 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
             'mean_phc_mse': total_mean_phc_mse / n_iter}
 
 
+def batch_dvm_eval(experiments, n_steps, n_iter, phc_granularity, hmc=True, expec_scoring=True):
+    """
+    Perform a batch evaluation of a set of experiments
+    of the Discrete Voter Model.
+
+    experiments (List of Elections): the list of elections to be evaluated
+    n_steps (int): the number of steps to run the MCMC for
+    n_iter (int): the number of times to repeat the experiment
+    phc_granularity (int): the size of a dimension of the PHC
+    hmc (bool): whether to use the HMC or RWM kernel
+    expec_scoring (bool): whether to score by:
+        1. the probability of a PHC to produce the outcome
+        (False, default)
+        2. the difference in the outcome and the PHC's expectation
+        (True)
+
+    return: a Pandas DataFrame of the result of the experiments
+    """
+    exper_results = []
+    for election, label in tqdm(experiments, desc="Elections progress"):
+        eval_result = dvm_evaluator(election,
+                                    label,
+                                    phc_granularity=phc_granularity,
+                                    hmc=hmc,
+                                    expec_scoring=expec_scoring,
+                                    n_steps=n_steps,
+                                    n_iter=n_iter)
+        exper_results.append(eval_result)
+
+    df = pd.DataFrame(exper_results)
+    df['phc_granularity'] = phc_granularity
+    df['n_steps'] = n_steps
+
+    return df
+
+
 # Suppress logging for pyMC3
 pymc3_logger = logging.getLogger('pymc3')
 pymc3_logger.setLevel(logging.CRITICAL)
@@ -149,3 +188,28 @@ def kei_evaluator(election, label, n_steps=500, n_iter=1, verbose=False):
     return {'label': label,
             'time': total_time / n_iter,
             'mse': total_mse / n_iter}
+
+
+def batch_kei_eval(experiments, n_steps, n_iter):
+    """
+    Perform a batch evaluation of a set of experiments
+    of King's Ecological Inference method.
+
+    experiments (List of Elections): the list of elections to be evaluated
+    n_steps (int): the number of steps to run the MCMC for
+    n_iter (int): the number of times to repeat the experiment
+
+    return: a Pandas DataFrame of the result of the experiments
+    """
+    exper_results = []
+    for election, label in tqdm(experiments, desc="Elections progress"):
+        eval_result = kei_evaluator(election,
+                                    label,
+                                    n_steps=n_steps,
+                                    n_iter=n_iter)
+        exper_results.append(eval_result)
+
+    df = pd.DataFrame(exper_results)
+    df['n_steps'] = n_steps
+
+    return df

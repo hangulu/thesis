@@ -9,6 +9,7 @@ import tensorflow as tf
 
 import tools
 
+
 def get_vote_outcome(flat_index, phc_shape, demo):
     """
     Find the vote outcome of a given election
@@ -32,6 +33,7 @@ def get_vote_outcome(flat_index, phc_shape, demo):
 
     return vote_outcome
 
+
 @tf.function
 def expec_votes(phc, demo):
     """
@@ -44,7 +46,7 @@ def expec_votes(phc, demo):
     return: the expectation for the vote outcomes over the PHC
     """
     normalized_phc = tools.prob_normalize(phc)
-    flat_phc = tf.reshape(phc, [-1])
+    flat_phc = tf.reshape(normalized_phc, [-1])
 
     get_vote_outcome_partial = functools.partial(
         get_vote_outcome,
@@ -55,6 +57,7 @@ def expec_votes(phc, demo):
         tf.range(tf.size(flat_phc)), dtype=tf.float32)
 
     return tools.reduce_average(outcomes, flat_phc)
+
 
 @tf.function
 def prob_from_expec(phc, demo, observed):

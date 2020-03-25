@@ -3,13 +3,9 @@ This module implements subroutines for creating elections and handling their
 data.
 """
 
-import math
 import numpy as np
-import scipy.special
 import tensorflow as tf
-from tqdm import tqdm
 
-import tools
 
 def get_vote_pcts(index, matrix_dim, demo):
     """
@@ -25,6 +21,7 @@ def get_vote_pcts(index, matrix_dim, demo):
     """
     return {group: (tf.cast(index[num], tf.float32) + 0.5) / matrix_dim for num, group in enumerate(demo)}
 
+
 class Election:
     """
     An election in a district.
@@ -35,6 +32,7 @@ class Election:
         dvp (dict): Demographic Voting Probabilities: the theoretical voting
         percentages of each demographic group, for each candidate
     """
+
     def __init__(self, candidates, demo, demo_vote_prob=None, mock=True):
         # Intialize the variables
         self.candidates = candidates
@@ -53,7 +51,6 @@ class Election:
         Simulate an election.
         """
         # Set up the result dictionary for the electoral outcome
-        n_groups = len(self.demo)
         result = {cand: (0, {group: 0 for group in self.demo}) for cand in self.candidates}
 
         # Iterate through each demographic group
@@ -89,7 +86,8 @@ class Election:
 
         cand (str): the candidate
 
-        return: a Python dictionary containing the demographic breakdown of a candidate's electoral result
+        return: a Python dictionary containing the demographic breakdown of
+        a candidate's electoral result
         """
         return self.outcome[cand][1]
 
@@ -98,6 +96,7 @@ class Election:
             return f"A mock election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
 
         return f"A real election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
+
 
 def generate_random_election(candidates, demo, beta):
     """
