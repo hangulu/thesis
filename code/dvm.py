@@ -65,6 +65,11 @@ def rwm_proposal_fn(states, seed, epsilon=0.001):
     flattened_state[cell_1_index] -= epsilon
     flattened_state[cell_2_index] += epsilon
 
+    # Check if either cell has dipped below 0
+    # If so, "reject" by returning the previous state
+    if flattened_state[cell_1_index] < 0 or flattened_state[cell_2_index] < 0:
+        return [state]
+
     # Convert back to a Tensor and return the PHC
     tf_state = tf.convert_to_tensor(flattened_state, dtype=state.dtype)
 
