@@ -51,7 +51,7 @@ def dvm_evaluator(election, label, phc_granularity=10, hmc=False,
     for _ in trange(n_iter, desc="Experiment progress", leave=verbose):
         # Get the observed votes for the first candidate
         first_cand = election.candidates[0]
-        first_cand_obs_votes = election.outcome[first_cand][0]
+        first_cand_obs_votes = election.vote_totals[first_cand]
 
         # Run the MCMC with the specified kernel
         total_time -= time.time()
@@ -161,7 +161,7 @@ def kei_evaluator(election, label, n_steps=500, n_iter=1, verbose=False):
     for _ in trange(n_iter, desc="Experiment progress", leave=verbose):
         # Get the observed votes for the first candidate
         first_cand = election.candidates[0]
-        first_cand_obs_votes = election.outcome[first_cand][0]
+        first_cand_obs_votes = election.vote_totals[first_cand]
 
         prec_demos = [election.demo]
 
