@@ -35,18 +35,22 @@ def get_vote_outcome(flat_index, phc_shape, demo):
 
 
 @tf.function
-def expec_votes(phc, demo):
+def expec_votes(phc, demo, rwm=False):
     """
     Find the expectation of the vote outcome
     for a candidate, with a given PHC.
 
     phc (Tensor): the Tensor representation of a PHC
     demo (dict): the demographics of the district
+    rwm (bool): whether this function serves the RWM or HMC kernel
 
     return: the expectation for the vote outcomes over the PHC
     """
-    normalized_phc = tools.prob_normalize(phc)
-    flat_phc = tf.reshape(normalized_phc, [-1])
+    if rwm:
+        flat_phc = tf.reshape(phc, [-1])
+    else:
+        normalized_phc = tools.prob_normalize(phc)
+        flat_phc = tf.reshape(normalized_phc, [-1])
 
     get_vote_outcome_partial = functools.partial(
         get_vote_outcome,
@@ -60,7 +64,7 @@ def expec_votes(phc, demo):
 
 
 @tf.function
-def prob_from_expec(phc, demo, observed):
+def prob_from_expec(phc, demo, observed, rwm=False):
     """
     Derive a probability of a PHC by comparing its expectation to
     the observed number of votes.
@@ -68,9 +72,10 @@ def prob_from_expec(phc, demo, observed):
     phc (Tensor): the Tensor representation of a PHC
     demo (dict): the demographics of the district
     observed (int): the observed number of votes the candidate received
+    rwm (bool): whether this function serves the RWM or HMC kernel
 
     return: the complement of the sigmoid function applied to the
     difference in expectation
     """
     return tf.math.log(1. - tf.math.sigmoid(
-        tf.math.abs(observed - expec_votes(phc, demo))))
+        tf.math.abs(observed - expec_votes(phc, demo, rwm=rwm))))

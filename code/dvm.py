@@ -44,6 +44,33 @@ def mean_phc(chain_results):
     return tf.math.reduce_mean(normalized_results, axis=0)
 
 
+def rwm_proposal_fn(states, seed, epsilon=0.001):
+    """
+    Generate a proposal for the Random Walk Metropolis kernel.
+
+    states (Tensor): the current state of the Markov chain, as a list
+    seed (int): the seed used to generate the proposal
+    epsilon (float): the value to add and subtract to places in the PHC
+    """
+    # Extract the single state from the `states` list
+    state = states.pop()
+
+    # Select two random cells in the PHC
+    size = tf.reduce_prod(state.shape)
+    cell_1_index = tf.random.uniform(shape=[], minval=0, maxval=size - 1, dtype=tf.int32)
+    cell_2_index = tf.random.uniform(shape=[], minval=0, maxval=size - 1, dtype=tf.int32)
+
+    # Flatten the state and change the cells
+    flattened_state = tf.reshape(state, [-1]).numpy()
+    flattened_state[cell_1_index] -= epsilon
+    flattened_state[cell_2_index] += epsilon
+
+    # Convert back to a Tensor and return the PHC
+    tf_state = tf.convert_to_tensor(flattened_state, dtype=state.dtype)
+
+    return [tf.reshape(tf_state, state.shape)]
+
+
 def init_hmc_kernel(log_prob_fn, step_size, num_adaptation_steps=0):
     """
     Initialize the HMC kernel.
@@ -71,7 +98,7 @@ def init_rwm_kernel(log_prob_fn):
 
     return: kernel
     """
-    return tfp.mcmc.RandomWalkMetropolis(log_prob_fn)
+    return tfp.mcmc.RandomWalkMetropolis(log_prob_fn, new_state_fn=rwm_proposal_fn)
 
 
 def hmc_trace_fn(_, pkr):
@@ -177,7 +204,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
         2. the difference in the outcome and the PHC's expectation
         (True)
     init_step_size (float): the initial step size for the transition
-    adaptation_frac (float): the fraction of the burn in steps to be used for step size adaptation
+    adaptation_frac (float): the fraction of the burn in steps to be used
+    for step size adaptation
     pause_point (int): the number of iterations to run in each chain chunk
     verbose (bool): whether to display loogging and progress bars
 
@@ -361,7 +389,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         target_log_prob_fn = functools.partial(
             ev.prob_from_expec,
             demo=demo,
-            observed=observed)
+            observed=observed,
+            rwm=True)
     else:
         alg_steps = 4
         scorer = 'prob'
@@ -377,7 +406,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
             pv.prob_votes,
             demo=demo,
             observed=observed,
-            coeff_dict=coeff_dict)
+            coeff_dict=coeff_dict,
+            rwm=True)
 
     # Initialize the RWM transition kernel
     rwm_kernel = init_rwm_kernel(target_log_prob_fn)

@@ -87,7 +87,7 @@ def get_vote_probability(flat_index, phc, demo, coeff_dict):
 
 
 @tf.function
-def prob_votes(phc, demo, observed, coeff_dict):
+def prob_votes(phc, demo, observed, coeff_dict, rwm=False):
     """
     Find the probability that a PHC produced
     the observed number of votes that a candidate
@@ -98,11 +98,15 @@ def prob_votes(phc, demo, observed, coeff_dict):
     demo (dict): the demographics of the district
     observed (int): the observed number of votes the candidate received
     coeff_dict (dict): the binomial coefficients for each partition
+    rwm (bool): whether this function serves the RWM or HMC kernel
 
     return: the probability that a PHC produced the observed outcomes
     """
-    normalized_phc = tools.prob_normalize(phc)
-    flat_phc = tf.reshape(normalized_phc, [-1])
+    if rwm:
+        flat_phc = tf.reshape(phc, [-1])
+    else:
+        normalized_phc = tools.prob_normalize(phc)
+        flat_phc = tf.reshape(normalized_phc, [-1])
 
     get_vote_prob_partial = functools.partial(
         get_vote_probability,
