@@ -105,13 +105,14 @@ def burn_in(chain_result_tensor, burn_frac):
     return tf.slice(chain_result_tensor, begin, size)
 
 
-def dvm_elections(elections, phc_granularity=10, hmc=False,
+def dvm_elections(elections, candidate=None, phc_granularity=10, hmc=False,
                   expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1,
                   verbose=False):
     """
     Run the Discrete Voter Model on a collection of Election objects
 
-    elections (list of Election objects): the elections to evaluate
+    elections (list of Election objects): the elections to analyze
+    candidate (string): the candidate to analyze
     phc_granularity (int): the size of a dimension of the PHC
     hmc (bool): whether to use the HMC or RWM kernel
     expec_scoring (bool): whether to score by:
@@ -131,9 +132,10 @@ def dvm_elections(elections, phc_granularity=10, hmc=False,
         # Create an initial grid
         initial_phc = phc.make_phc(len(election.demo), phc_granularity)
 
-        # Get the observed votes for the first candidate
-        first_cand = election.candidates[0]
-        first_cand_obs_votes = election.vote_totals[first_cand]
+        # Get the observed votes for the desired candidate
+        if not candidate:
+            candidate = election.candidates[0]
+        cand_obs_votes = election.vote_totals[candidate]
 
         # Run the MCMC with the specified kernel
         total_time = 0
@@ -141,12 +143,12 @@ def dvm_elections(elections, phc_granularity=10, hmc=False,
 
         if hmc:
             chain_results = hmc(n_steps, burn_frac, initial_phc,
-                                election.demo, first_cand_obs_votes,
+                                election.demo, cand_obs_votes,
                                 expec_scoring=expec_scoring,
                                 verbose=verbose)
         else:
             chain_results = rwm(n_steps, burn_frac, initial_phc,
-                                election.demo, first_cand_obs_votes,
+                                election.demo, cand_obs_votes,
                                 expec_scoring=expec_scoring,
                                 verbose=verbose)
 
