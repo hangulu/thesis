@@ -4,6 +4,7 @@ data.
 """
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 
 
@@ -29,22 +30,38 @@ class Election:
     Attributes:
         candidates (string list): the candidates
         demo (dict): the demographics of the electorate
+        winner (string): the candidate with the most votes
+        vote_totals (dict): the vote totals of each candidate in the
+        election
         dvp (dict): Demographic Voting Probabilities: the theoretical voting
         percentages of each demographic group, for each candidate
     """
 
-    def __init__(self, candidates, demo, demo_vote_prob=None, mock=True):
+    def __init__(self, candidates, demo, name=None, cand_vote_totals=None, demo_vote_prob=None, mock=True):
         # Intialize the variables
+        # Always present
         self.candidates = candidates
         self.demo = demo
+        self.vote_totals = cand_vote_totals
+        self.winner = None
+        self.name = name
+
+        # None or False, unless a mock election
         self.dvp = demo_vote_prob
         self.outcome = None
-        self.winner = None
         self.mock = mock
 
-        # Simulate a mock election and decide a winner
-        if mock:
+        # Decide a winner
+        self.decide_election()
+
+    def decide_election(self):
+        """
+        Decide the winner of an election.
+        """
+        if not self.vote_totals:
             self.simulate()
+
+        self.winner = max(self.vote_totals, key=self.vote_totals.get)
 
     def simulate(self):
         """
@@ -68,17 +85,15 @@ class Election:
 
         self.outcome = result
 
-        max_votes = 0
-        winning_candidate = None
+        # Extract the vote totals
+        vote_totals = {}
+        for cand, demo_votes in result.items():
+            vote_totals[cand] = demo_votes[0]
 
-        for cand, ballot in result.items():
-            if ballot[0] > max_votes:
-                max_votes = ballot[0]
-                winning_candidate = [cand]
-            elif ballot[0] == max_votes and winning_candidate:
-                winning_candidate.append(cand)
+        self.vote_totals = vote_totals
 
-        self.winner = winning_candidate
+        # Extract the winner
+        self.decide_election()
 
     def get_demo_votes(self, cand):
         """
@@ -98,30 +113,59 @@ class Election:
         return f"A real election with {len(self.candidates)} candidates in a district with {len(self.demo)} demographic groups."
 
 
-def generate_random_election(candidates, demo, beta):
+def create_elections(voting_data, demo_data, name, full_map=True):
     """
-    Generate a random election.
+    Create elections from Pandas DataFrames of voting and
+    demographic data.
 
-    candidates (string list): the candidates
-    demo (dict): the demographics of the electorate
-    beta (dict): the theoretical voting percentages of
-    each demographic group, for each candidate
+    voting_data (Pandas DataFrame): the voting data for an election
+    demo_data (Pandas DataFrame): the demographic data for an election
+    name (string): identifiers of the election(s)
+    full_map (bool): whether to use the full map as an election, or do
+    precinct-wise elections
 
-    return: a dictionary of candidates and the vote breakdowns by
-    demographic group
+    return: a list of election objects
     """
-    # Set up the result dictionary
-    num_groups = len(demo)
-    result = {'a': (0, [0] * num_groups),
-              'b': (0, [0] * num_groups),
-              'c': (0, [0] * num_groups)}
+    demo_names = list(demo_data.columns)
+    demo_names.remove('prec_id')
 
-    # Iterate through each demographic group
-    for group_index, group in enumerate(demo):
-        # Simulate each voter
-        for voter in range(demo[group]):
-            vote = np.random.choice(candidates, 1, beta[group])[0]
-            prev_total, prev_breakdown = result[vote]
-            prev_breakdown[group_index] += 1
-            result[vote] = prev_total + 1, prev_breakdown
-    return result
+    candidates = list(voting_data.columns)
+    candidates.remove('prec_id')
+
+    combined_data = pd.merge(voting_data, demo_data, on='prec_id')
+
+    elections = []
+    if full_map:
+        data = combined_data.sum()
+        cand_vote_totals = {}
+        for cand in candidates:
+            cand_vote_totals[cand] = data[cand]
+
+        demo = {}
+        for demo_group in demo_names:
+            demo[demo_group] = data[demo_group]
+
+        election_name = f"{name}_full"
+
+        elections.append(Election(candidates, demo, name=name,
+                                  cand_vote_totals=cand_vote_totals,
+                                  mock=False))
+    else:
+        for row in combined_data.itertuples(index=False):
+            cand_vote_totals = {}
+            for cand in candidates:
+                cand_vote_totals[cand] = getattr(row, cand)
+
+            demo = {}
+            for demo_group in demo_names:
+                demo[demo_group] = getattr(row, demo_group)
+
+            prec_id = getattr(row, 'prec_id')
+
+            election_name = f"{name}_{prec_id}"
+
+            elections.append(Election(candidates, demo, name=election_name,
+                                      cand_vote_totals=cand_vote_totals,
+                                      mock=False))
+
+    return elections
