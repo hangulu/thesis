@@ -219,7 +219,7 @@ The differences in transition kernels, $Q(x, \cdot)$, and acceptance probability
 
 \subsection{Random Walk Metropolis}
 
-The Markov chain Monte Carlo method which uses the Random Walk Metropolis transition kernel is called the Metropolis-Hastings algorithm. Metropolis-Hastings is one of the simplest MCMC methods, but is still quite reliable and widely used for many applications.
+One Markov chain Monte Carlo method which uses the Random Walk Metropolis transition kernel is the Metropolis-Hastings algorithm. Metropolis-Hastings is one of the simplest MCMC methods, but is still quite reliable and widely used for many applications.
 
 This transition kernel requires that $q(x, y) = q(y - x)$. This is one way to ensure that the chain is detail balanced, a necessary condition for the chain to converge to the target distribution.\cite{mcmc_rwm}. Examples of such distributions are $Q(x, \cdot) = N(x, \sigma^2)$ and $Q(x, \cdot) = Uniform(x - 1, x + 1)$. The Discrete Voter Model uses the Normal proposal.
 
