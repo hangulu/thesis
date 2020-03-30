@@ -7,9 +7,10 @@ import functools
 import time
 import tensorflow as tf
 import tensorflow_probability as tfp
-from tqdm.autonotebook import trange
+from tqdm.autonotebook import trange, tqdm
 
 import expec_votes as ev
+import phc
 import prob_votes as pv
 import tools
 
@@ -102,6 +103,60 @@ def burn_in(chain_result_tensor, burn_frac):
         size.append(dim)
 
     return tf.slice(chain_result_tensor, begin, size)
+
+
+def dvm_elections(elections, phc_granularity=10, hmc=False,
+                  expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1,
+                  verbose=False):
+    """
+    Run the Discrete Voter Model on a collection of Election objects
+
+    elections (list of Election objects): the elections to evaluate
+    phc_granularity (int): the size of a dimension of the PHC
+    hmc (bool): whether to use the HMC or RWM kernel
+    expec_scoring (bool): whether to score by:
+        1. the probability of a PHC to produce the outcome
+        (False, default)
+        2. the difference in the outcome and the PHC's expectation
+        (True)
+    burn_frac (float): the fraction of MCMC iterations to burn
+    n_steps (int): the number of steps to run the MCMC for
+    verbose (bool): whether to display loogging and progress bars
+
+    return: a list of dictionaries of the election name, chain results and time
+    """
+    results = []
+
+    for election in tqdm(elections, desc="Elections", leave=verbose):
+        # Create an initial grid
+        initial_phc = phc.make_phc(len(election.demo), phc_granularity)
+
+        # Get the observed votes for the first candidate
+        first_cand = election.candidates[0]
+        first_cand_obs_votes = election.vote_totals[first_cand]
+
+        # Run the MCMC with the specified kernel
+        total_time = 0
+        total_time -= time.time()
+
+        if hmc:
+            chain_results = hmc(n_steps, burn_frac, initial_phc,
+                                election.demo, first_cand_obs_votes,
+                                expec_scoring=expec_scoring,
+                                verbose=verbose)
+        else:
+            chain_results = rwm(n_steps, burn_frac, initial_phc,
+                                election.demo, first_cand_obs_votes,
+                                expec_scoring=expec_scoring,
+                                verbose=verbose)
+
+        total_time += time.time()
+
+        results.append({'name': election.name,
+                        'chain_results': chain_results,
+                        'time': total_time})
+
+    return results
 
 
 def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
