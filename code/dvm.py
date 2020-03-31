@@ -14,6 +14,9 @@ import phc
 import prob_votes as pv
 import tools
 
+# Suppress TenorFlow warnings
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
 
 def chain_mle(chain_results):
     """
@@ -240,7 +243,7 @@ def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
         alg_steps = 3
         scorer = 'expec'
 
-        # Partially apply `prob_from_expec`, so it only takes the PHC
+        # Apply `expec_votes` to every precinct
         def expec_log_prob_fn(phc):
             summation = 0
             for prec, prec_votes in observed_per_prec.items():
@@ -266,6 +269,8 @@ def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
             for prec, prec_votes in observed_per_prec.items():
                 summation += pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec])
             return summation
+
+        target_log_prob_fn = expec_log_prob_fn
 
     # Initialize the adaptive HMC transition kernel
     adaptive_hmc_kernel = init_hmc_kernel(target_log_prob_fn, init_step_size, num_adaptation_steps)
