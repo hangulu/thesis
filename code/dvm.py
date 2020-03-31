@@ -398,8 +398,7 @@ def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
         def expec_log_prob_fn(phc):
             summation = 0
             for prec, prec_votes in observed_per_prec.items():
-                tensor_demo = tf.convert_to_tensor(np.fromiter(demo_per_prec[prec].values(), dtype=np.float32))
-                summation += ev.prob_from_expec(phc, tensor_demo, prec_votes)
+                summation += ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes)
 
             return summation
 

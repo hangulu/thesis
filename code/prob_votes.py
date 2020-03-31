@@ -58,7 +58,7 @@ def get_vote_probability(flat_index, phc, demo, coeff_dict):
     matrix_dim = phc.shape[0]
 
     # Find the vote percentages for each demographic group
-    vote_pcts = elect.get_vote_pcts(index, matrix_dim, demo)
+    vote_pcts = elect.get_vote_pcts_per_prec(index, matrix_dim, demo)
 
     total_prob = [0] * len(coeff_dict)
 

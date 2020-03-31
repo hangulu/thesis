@@ -1,10 +1,5 @@
 # Project-specific files
-config.py
-config.pyc
-center.pyc
-googleTypes.pyc
-googleAPICache.sqlite
-*.db-journal
+pickles/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
