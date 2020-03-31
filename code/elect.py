@@ -155,7 +155,7 @@ class Election:
         return f"A real election with {len(self.candidates)} candidates in a district with {len(self.precincts)} precincts and {self.num_demo_groups} demographic groups."
 
 
-def create_elections(voting_data, demo_data, name):
+def create_elections(voting_data, demo_data, name, id='prec_id'):
     """
     Create elections from Pandas DataFrames of voting and
     demographic data.
@@ -163,22 +163,21 @@ def create_elections(voting_data, demo_data, name):
     voting_data (Pandas DataFrame): the voting data for an election
     demo_data (Pandas DataFrame): the demographic data for an election
     name (string): identifiers of the election(s)
+    id (string): the ID of the smallest piece of the electorate
 
     return: a list of election objects
     """
     demo_names = list(demo_data.columns)
-    demo_names.remove('prec_id')
 
     candidates = list(voting_data.columns)
-    candidates.remove('prec_id')
 
-    combined_data = pd.merge(voting_data, demo_data, on='prec_id')
+    combined_data = pd.merge(voting_data, demo_data, on=id)
 
     demo_per_prec = {}
     cand_vote_totals_per_prec = {}
 
-    for row in combined_data.itertuples(index=False):
-        prec_id = getattr(row, 'prec_id')
+    for row in combined_data.itertuples():
+        prec_id = getattr(row, 'Index')
 
         prec_cand_vote_totals = {}
         for cand in candidates:
