@@ -3,7 +3,7 @@ This module implements the Discrete Voter Model for ecological inference in
 Python 3.
 """
 
-import functools
+import numpy as np
 import time
 import tensorflow as tf
 import tensorflow_probability as tfp
@@ -137,13 +137,13 @@ def burn_in(chain_result_tensor, burn_frac):
     return tf.slice(chain_result_tensor, begin, size)
 
 
-def dvm_elections(elections, candidate=None, phc_granularity=10, hmc=False,
+def dvm_elections(election, candidate=None, phc_granularity=10, hmc=False,
                   expec_scoring=False, burn_frac=0.3, n_steps=200, n_iter=1,
                   verbose=False):
     """
-    Run the Discrete Voter Model on a collection of Election objects
+    Run the Discrete Voter Model on an Election.
 
-    elections (list of Election objects): the elections to analyze
+    election (Election): the election to analyze
     candidate (string): the candidate to analyze
     phc_granularity (int): the size of a dimension of the PHC
     hmc (bool): whether to use the HMC or RWM kernel
@@ -158,42 +158,40 @@ def dvm_elections(elections, candidate=None, phc_granularity=10, hmc=False,
 
     return: a list of dictionaries of the election name, chain results and time
     """
-    results = []
+    # Create an initial grid
+    initial_phc = phc.make_phc(election.num_demo_groups, phc_granularity)
 
-    for election in tqdm(elections, desc="Elections", leave=verbose):
-        # Create an initial grid
-        initial_phc = phc.make_phc(len(election.demo), phc_granularity)
+    # Get the observed votes for the desired candidate
+    if not candidate:
+        candidate = election.candidates[0]
 
-        # Get the observed votes for the desired candidate
-        if not candidate:
-            candidate = election.candidates[0]
-        cand_obs_votes = election.vote_totals[candidate]
+    cand_obs_votes = {}
+    for prec in election.precincts:
+        cand_obs_votes[prec] = election.vote_totals[prec][candidate]
 
-        # Run the MCMC with the specified kernel
-        total_time = 0
-        total_time -= time.time()
+    # Run the MCMC with the specified kernel
+    total_time = 0
+    total_time -= time.time()
 
-        if hmc:
-            chain_results = hmc(n_steps, burn_frac, initial_phc,
-                                election.demo, cand_obs_votes,
-                                expec_scoring=expec_scoring,
-                                verbose=verbose)
-        else:
-            chain_results = rwm(n_steps, burn_frac, initial_phc,
-                                election.demo, cand_obs_votes,
-                                expec_scoring=expec_scoring,
-                                verbose=verbose)
+    if hmc:
+        chain_results = hmc(n_steps, burn_frac, initial_phc,
+                            election.dpp, cand_obs_votes,
+                            expec_scoring=expec_scoring,
+                            verbose=verbose)
+    else:
+        chain_results = rwm(n_steps, burn_frac, initial_phc,
+                            election.dpp, cand_obs_votes,
+                            expec_scoring=expec_scoring,
+                            verbose=verbose)
 
-        total_time += time.time()
+    total_time += time.time()
 
-        results.append({'name': election.name,
-                        'chain_results': chain_results,
-                        'time': total_time})
-
-    return results
+    return {'name': election.name,
+            'chain_results': chain_results,
+            'time': total_time}
 
 
-def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
+def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
     """
     Run the Hamiltonian Monte Carlo MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -201,8 +199,9 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     n_iter (int): the number of iterations to run
     burn_frac (float): the fraction of iterations to burn
     initial_phc (Tensor): the probabilistic hypercube to start with
-    observed (int): the number of votes a candidate got in an election
-    demo (dict): the demographics of the district
+    observed_per_prec (dict): the number of votes the candidate got in each
+    precinct
+    demo_per_prec (dict): the precinct-wise demographics of the electorate
     expec_scoring (bool): whether to score by:
         1. the probability of a PHC to produce the outcome
         (False, default)
@@ -242,10 +241,15 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
         scorer = 'expec'
 
         # Partially apply `prob_from_expec`, so it only takes the PHC
-        target_log_prob_fn = functools.partial(
-            ev.prob_from_expec,
-            demo=demo,
-            observed=observed)
+        def expec_log_prob_fn(phc):
+            summation = 0
+            for prec, prec_votes in observed_per_prec.items():
+                summation += ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes)
+
+            return summation
+
+        target_log_prob_fn = expec_log_prob_fn
+
     else:
         alg_steps = 4
         scorer = 'prob'
@@ -254,14 +258,14 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
             print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
         cur_alg_step += 1
         # Get the coefficients for the binomial calculations
-        coeff_dict = pv.get_coefficients(demo, observed)
+        coeff_dicts = pv.get_coefficients(demo_per_prec, observed_per_prec)
 
-        # Partially apply `prob_votes`, so it only takes the hypercube
-        target_log_prob_fn = functools.partial(
-            pv.prob_votes,
-            demo=demo,
-            observed=observed,
-            coeff_dict=coeff_dict)
+        # Apply `prob_votes` to every precinct
+        def prob_log_prob_fn(phc):
+            summation = 0
+            for prec, prec_votes in observed_per_prec.items():
+                summation += pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec])
+            return summation
 
     # Initialize the adaptive HMC transition kernel
     adaptive_hmc_kernel = init_hmc_kernel(target_log_prob_fn, init_step_size, num_adaptation_steps)
@@ -348,7 +352,7 @@ def hmc(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, ini
     return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
 
 
-def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pause_point=10, verbose=True):
+def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_scoring=False, pause_point=10, verbose=True):
     """
     Run the Random Walk Metropolis MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -356,8 +360,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
     n_iter (int): the number of iterations to run
     burn_frac (float): the fraction of iterations to burn
     initial_phc (Tensor): the probabilistic hypercube to start with
-    observed_votes (int): the number of votes a candidate got in an election
-    demo (dict): the demographics of the district
+    observed_per_prec (dict): the number of votes the candidate got in each precinct
+    demo_per_prec (dict): the demographics of the electorate, per precinct
     expec_scoring (bool): whether to score by:
         1. the probability of a PHC to produce the outcome
         (False, default)
@@ -390,12 +394,17 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         alg_steps = 3
         scorer = 'expec'
 
-        # Partially apply `prob_from_expec`, so it only takes the PHC
-        target_log_prob_fn = functools.partial(
-            ev.prob_from_expec,
-            demo=demo,
-            observed=observed,
-            rwm=True)
+        # Apply `prob_from_expec` to every precinct
+        def expec_log_prob_fn(phc):
+            summation = 0
+            for prec, prec_votes in observed_per_prec.items():
+                tensor_demo = tf.convert_to_tensor(np.fromiter(demo_per_prec[prec].values(), dtype=np.float32))
+                summation += ev.prob_from_expec(phc, tensor_demo, prec_votes)
+
+            return summation
+
+        target_log_prob_fn = expec_log_prob_fn
+
     else:
         alg_steps = 4
         scorer = 'prob'
@@ -403,16 +412,18 @@ def rwm(n_iter, burn_frac, initial_phc, demo, observed, expec_scoring=False, pau
         if verbose:
             print(f"[{cur_alg_step}/{alg_steps}] Creating the binomial coefficients...")
         cur_alg_step += 1
-        # Get the coefficients for the binomial calculations
-        coeff_dict = pv.get_coefficients(demo, observed)
+        # Get the coefficients for the binomial calculations,
+        # for each precinct
+        coeff_dicts = pv.get_coefficients(demo_per_prec, observed_per_prec)
 
-        # Partially apply `prob_votes`, so it only takes the hypercube
-        target_log_prob_fn = functools.partial(
-            pv.prob_votes,
-            demo=demo,
-            observed=observed,
-            coeff_dict=coeff_dict,
-            rwm=True)
+        # Apply `prob_votes` to every precinct
+        def prob_log_prob_fn(phc):
+            summation = 0
+            for prec, prec_votes in observed_per_prec.items():
+                summation += pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec])
+            return summation
+
+        target_log_prob_fn = prob_log_prob_fn
 
     # Initialize the RWM transition kernel
     rwm_kernel = init_rwm_kernel(target_log_prob_fn)

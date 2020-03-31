@@ -17,21 +17,24 @@ def get_coefficients(demo, observed):
     Get the binomial coefficients for calculating the probability of a PHC
     producing an election result.
 
-    demo (dict): the demographics of the district
-    observed (int): the number of votes a candidate got in an election
+    demo (dict): the demographics of the district, per precinct
+    observed (dict): the number of votes a candidate got in each precinct
 
     return: a Python dictionary containing the integer partitions and their
-    binomial coefficients
+    binomial coefficients for each precinct
     """
     coeff_dict = {}
-    observed_factorial = math.factorial(observed)
+    observed_factorials = {prec_id: (obs_votes, math.factorial(obs_votes)) for prec_id, obs_votes in observed.items()}
 
-    for p in tools.permute_integer_partition(observed, len(demo)):
-        factorial_list = tf.convert_to_tensor(
-            scipy.special.factorial(p), dtype=float)
-        coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
+    for prec, (obs_votes, observed_factorial) in observed_factorials.items():
+        prec_coeff_dict = {}
+        for p in tools.permute_integer_partition(obs_votes, len(demo[prec])):
+            factorial_list = tf.convert_to_tensor(
+                scipy.special.factorial(p), dtype=float)
+            coefficient = observed_factorial / tf.math.reduce_prod(factorial_list)
 
-        coeff_dict[p] = tf.cast(coefficient, tf.float32)
+            prec_coeff_dict[p] = tf.cast(coefficient, tf.float32)
+        coeff_dict[prec] = prec_coeff_dict
 
     return coeff_dict
 
@@ -104,15 +107,21 @@ def prob_votes(phc, demo, observed, coeff_dict, rwm=False):
     """
     if rwm:
         flat_phc = tf.reshape(phc, [-1])
+
+        get_vote_prob_partial = functools.partial(
+            get_vote_probability,
+            phc=phc,
+            demo=demo,
+            coeff_dict=coeff_dict)
     else:
         normalized_phc = tools.prob_normalize(phc)
         flat_phc = tf.reshape(normalized_phc, [-1])
 
-    get_vote_prob_partial = functools.partial(
-        get_vote_probability,
-        phc=normalized_phc,
-        demo=demo,
-        coeff_dict=coeff_dict)
+        get_vote_prob_partial = functools.partial(
+            get_vote_probability,
+            phc=normalized_phc,
+            demo=demo,
+            coeff_dict=coeff_dict)
 
     vote_prob = tf.map_fn(get_vote_prob_partial,
         tf.range(tf.size(flat_phc)), dtype=tf.float32)

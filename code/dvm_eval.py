@@ -47,25 +47,28 @@ def dvm_evaluator(election, label, candidate=None, phc_granularity=10,
     total_mle_phc_mse = 0
     total_mean_phc_mse = 0
 
-    initial_phc = phc.make_phc(len(election.demo), phc_granularity)
+    initial_phc = phc.make_phc(election.num_demo_groups, phc_granularity)
 
     for _ in trange(n_iter, desc="Experiment progress", leave=verbose):
         # Get the observed votes for the desired candidate
         if not candidate:
             candidate = election.candidates[0]
-        cand_obs_votes = election.vote_totals[candidate]
+
+        cand_obs_votes = {}
+        for prec in election.precincts:
+            cand_obs_votes[prec] = election.vote_totals[prec][candidate]
 
         # Run the MCMC with the specified kernel
         total_time -= time.time()
 
         if hmc:
             chain_results = dvm.hmc(n_steps, burn_frac, initial_phc,
-                                    election.demo, cand_obs_votes,
+                                    election.dpp, cand_obs_votes,
                                     expec_scoring=expec_scoring,
                                     verbose=verbose)
         else:
             chain_results = dvm.rwm(n_steps, burn_frac, initial_phc,
-                                    election.demo, cand_obs_votes,
+                                    election.dpp, cand_obs_votes,
                                     expec_scoring=expec_scoring,
                                     verbose=verbose)
 
@@ -79,19 +82,21 @@ def dvm_evaluator(election, label, candidate=None, phc_granularity=10,
         best_cell_mle_phc = tools.get_most_probable_cell(mle_phc)
         best_cell_mean_phc = tools.get_most_probable_cell(mean_phc)
 
-        vote_pcts_mle_phc = elect.get_vote_pcts(best_cell_mle_phc, phc_granularity, election.demo)
-        vote_pcts_mean_phc = elect.get_vote_pcts(best_cell_mean_phc, phc_granularity, election.demo)
+        vote_pcts_mle_phc = elect.get_vote_pcts(best_cell_mle_phc, phc_granularity, election.dpp)
+        vote_pcts_mean_phc = elect.get_vote_pcts(best_cell_mean_phc, phc_granularity, election.dpp)
 
         # Find the MSE of the vote percentages if applicable
         if election.mock:
-            # Get the demographic voting probabilities for the first candidate
-            dvp_pcts = np.fromiter([pcts[candidate] for group, pcts in election.dvp.items()], dtype=float)
+            # Get the demographic voting probabilities for the desired
+            # candidate
+            for prec, dvp in election.dvp.items():
+                dvp_pct = np.fromiter([pcts[candidate] for group, pcts in dvp.items()], dtype=float)
 
-            mle_phc_mse_array = np.fromiter(vote_pcts_mle_phc.values(), dtype=float)
-            mean_phc_mse_array = np.fromiter(vote_pcts_mean_phc.values(), dtype=float)
+                mle_phc_mse_array = np.fromiter(vote_pcts_mle_phc[prec].values(), dtype=float)
+                mean_phc_mse_array = np.fromiter(vote_pcts_mean_phc[prec].values(), dtype=float)
 
-            total_mle_phc_mse += tools.mse(mle_phc_mse_array, dvp_pcts)
-            total_mean_phc_mse += tools.mse(mean_phc_mse_array, dvp_pcts)
+                total_mle_phc_mse += tools.mse(mle_phc_mse_array, dvp_pct)
+                total_mean_phc_mse += tools.mse(mean_phc_mse_array, dvp_pct)
 
     return {'label': label,
             'time': total_time / n_iter,
