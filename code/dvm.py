@@ -3,11 +3,10 @@ This module implements the Discrete Voter Model for ecological inference in
 Python 3.
 """
 
-import numpy as np
 import time
 import tensorflow as tf
 import tensorflow_probability as tfp
-from tqdm.autonotebook import trange, tqdm
+from tqdm.autonotebook import trange
 
 import expec_votes as ev
 import phc
@@ -194,7 +193,9 @@ def dvm_elections(election, candidate=None, phc_granularity=10, hmc=False,
             'time': total_time}
 
 
-def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6, pause_point=10, verbose=True):
+def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec,
+        expec_scoring=False, init_step_size=0.03, adaptation_frac=0.6,
+        pause_point=10, verbose=True):
     """
     Run the Hamiltonian Monte Carlo MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -245,11 +246,11 @@ def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
 
         # Apply `expec_votes` to every precinct
         def expec_log_prob_fn(phc):
-            summation = 0
+            expec_list = []
             for prec, prec_votes in observed_per_prec.items():
-                summation += ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes)
+                expec_list.append(ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes))
 
-            return summation
+            return tf.math.reduce_mean(expec_list)
 
         target_log_prob_fn = expec_log_prob_fn
 
@@ -265,10 +266,11 @@ def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
 
         # Apply `prob_votes` to every precinct
         def prob_log_prob_fn(phc):
-            summation = 0
+            prob_list = []
             for prec, prec_votes in observed_per_prec.items():
-                summation += pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec])
-            return summation
+                prob_list.append(pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec]))
+
+            return tf.math.reduce_mean(prob_list)
 
         target_log_prob_fn = expec_log_prob_fn
 
@@ -354,10 +356,14 @@ def hmc(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
     if verbose:
         print("Done.")
         print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
-    return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
+    return {'sample': burned_chain,
+            'scorer': scorer,
+            'log_prob_trace': burned_log_prob_trace,
+            'log_accept_trace': burned_log_accept_trace}
 
 
-def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_scoring=False, pause_point=10, verbose=True):
+def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec,
+        expec_scoring=False, pause_point=10, verbose=True):
     """
     Run the Random Walk Metropolis MCMC algorithm to sample the space
     of PHCs in the discrete voter model.
@@ -365,7 +371,8 @@ def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
     n_iter (int): the number of iterations to run
     burn_frac (float): the fraction of iterations to burn
     initial_phc (Tensor): the probabilistic hypercube to start with
-    observed_per_prec (dict): the number of votes the candidate got in each precinct
+    observed_per_prec (dict): the number of votes the candidate got in each
+    precinct
     demo_per_prec (dict): the demographics of the electorate, per precinct
     expec_scoring (bool): whether to score by:
         1. the probability of a PHC to produce the outcome
@@ -401,11 +408,11 @@ def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
 
         # Apply `prob_from_expec` to every precinct
         def expec_log_prob_fn(phc):
-            summation = 0
+            expec_list = []
             for prec, prec_votes in observed_per_prec.items():
-                summation += ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes)
+                expec_list.append(ev.prob_from_expec(phc, demo_per_prec[prec], prec_votes))
 
-            return summation
+            return tf.math.reduce_mean(expec_list)
 
         target_log_prob_fn = expec_log_prob_fn
 
@@ -422,10 +429,11 @@ def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
 
         # Apply `prob_votes` to every precinct
         def prob_log_prob_fn(phc):
-            summation = 0
+            prob_list = []
             for prec, prec_votes in observed_per_prec.items():
-                summation += pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec])
-            return summation
+                prob_list.append(pv.prob_votes(phc, demo_per_prec[prec], prec_votes, coeff_dicts[prec]))
+
+            return tf.math.reduce_mean(prob_list)
 
         target_log_prob_fn = prob_log_prob_fn
 
@@ -486,4 +494,7 @@ def rwm(n_iter, burn_frac, initial_phc, demo_per_prec, observed_per_prec, expec_
     if verbose:
         print("Done.")
         print(f"Generated a sample of {num_samples} observations in ~{elapsed} seconds.")
-    return {'sample': burned_chain, 'scorer': scorer, 'log_prob_trace': burned_log_prob_trace, 'log_accept_trace': burned_log_accept_trace}
+    return {'sample': burned_chain,
+            'scorer': scorer,
+            'log_prob_trace': burned_log_prob_trace,
+            'log_accept_trace': burned_log_accept_trace}

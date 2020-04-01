@@ -77,5 +77,5 @@ def prob_from_expec(phc, demo, observed, rwm=False):
     return: the complement of the sigmoid function applied to the
     difference in expectation
     """
-    return tf.math.log(1. - tf.math.sigmoid(
-        tf.math.abs(observed - expec_votes(phc, demo, rwm=rwm))))
+    expectation = expec_votes(phc, demo, rwm=rwm)
+    return tf.math.log(1 / (abs(observed - expectation) + 1))
