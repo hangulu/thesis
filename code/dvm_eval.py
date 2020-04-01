@@ -104,7 +104,8 @@ def dvm_evaluator(election, label, candidate=None, phc_granularity=10,
             'mean_phc_mse': total_mean_phc_mse / n_iter}
 
 
-def batch_dvm_eval(experiments, n_steps, n_iter, phc_granularity, hmc=True, expec_scoring=True):
+def batch_dvm_eval(experiments, n_steps, n_iter, phc_granularity, hmc=True,
+                   expec_scoring=True):
     """
     Perform a batch evaluation of a set of experiments
     of the Discrete Voter Model.

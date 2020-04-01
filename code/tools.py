@@ -8,6 +8,7 @@ import tensorflow as tf
 
 from itertools import chain, permutations
 
+
 def integer_partition(n, k, min_size=0):
     """
     Partition an integer.
@@ -28,6 +29,7 @@ def integer_partition(n, k, min_size=0):
     for i in range(min_size, n // k + 1):
         for result in integer_partition(n - i, k - 1, i):
             yield (i,) + result
+
 
 def permute_integer_partition(n, k, min_size=0):
     """
@@ -55,6 +57,7 @@ def mse(a, b):
     """
     return np.mean((a - b) ** 2)
 
+
 def find_last_finite(array, default=0):
     rev_array = array[::-1]
     index = np.argmax(tf.math.is_finite(rev_array))
@@ -64,10 +67,12 @@ def find_last_finite(array, default=0):
         return default
     return last_finite
 
+
 @tf.function
 def reduce_average(x, weights):
     numerator = tf.reduce_sum(tf.math.multiply(x, weights))
     return numerator / tf.math.reduce_sum(weights)
+
 
 def normalize(phc):
     """
@@ -96,6 +101,7 @@ def prob_normalize(phc):
     quotient = normalize(phc)
 
     return quotient / tf.math.reduce_sum(quotient)
+
 
 def get_most_probable_cell(phc):
     """

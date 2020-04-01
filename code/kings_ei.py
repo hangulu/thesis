@@ -7,6 +7,7 @@ https://gist.github.com/ColCarroll/9fb0e6714dc0369acf6549cededcc875
 import numpy as np
 import pymc3 as pm
 
+
 def eco_inf(prec_demos, first_cand_obs_votes, lmbda=0.5):
     """
     Run King's Ecological Inference method for the 2x2 case
@@ -40,4 +41,5 @@ def eco_inf(prec_demos, first_cand_obs_votes, lmbda=0.5):
 
         theta = demo_pcts * b_1 + (1 - demo_pcts) * b_2
         Tprime = pm.Binomial('Tprime', n=total_pop , p=theta, observed=first_cand_obs_votes)
+
     return model

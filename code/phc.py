@@ -1,8 +1,10 @@
 """
-This module creates probabilistic hypercubes for the Discrete Voter Model for ecological inference.
+This module creates probabilistic hypercubes for the Discrete Voter Model
+for ecological inference.
 """
 
 import tensorflow as tf
+
 
 def make_phc(num_groups, matrix_size, random=True):
     """

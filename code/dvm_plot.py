@@ -17,7 +17,9 @@ import tools
 sns.set(style='ticks')
 matplotlib.rcParams['font.family'] = "Helvetica"
 
-def trace_plot(chain_results, trace='prob', show_title=False, save=False, filename=None):
+
+def trace_plot(chain_results, trace='prob', show_title=False, save=False,
+               filename=None):
     """
     Plot the traces of the Markov Chain.
 
@@ -35,10 +37,10 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
     scorer = chain_results['scorer']
     xlabel = 'observation index'
 
-    if trace is 'prob':
+    if trace == 'prob':
         key = 'log_prob_trace'
 
-        if scorer is 'prob':
+        if scorer == 'prob':
             title = 'A Trace of the Probability \n of a Probabilistic Hypercube To Produce The Electoral Outcome'
             ylabel = 'probability'
         else:
@@ -49,9 +51,9 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
         key = 'log_accept_trace'
         ylabel = 'acceptance rate'
 
-        if scorer is 'prob':
+        if scorer == 'prob':
             title = 'A Trace of the Acceptance Rate \n of the MCMC Algorithm \n Scored With Probability'
-        elif scorer is 'expec':
+        elif scorer == 'expec':
             title = 'A Trace of the Acceptance Rate \n of the MCMC Algorithm \n Scored With Expectation'
 
     x = tf.math.exp(chain_results[key])
@@ -67,6 +69,8 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
     # Configure the axes
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(-3, 3),
+                         useMathText=True)
 
     if show_title:
         plt.title(title)
@@ -79,7 +83,9 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False, filena
 
     plt.show()
 
-def phc_plot_flat(phc, show_title=False, save=False, filename='flat_phc_plot'):
+
+def phc_plot_flat(phc, show_title=False, save=False,
+                  filename='flat_phc_plot'):
     """
     Plot the cells of a probabilistic hypercube in three dimensions.
     This is suitable for all types of PHCs.
@@ -101,6 +107,8 @@ def phc_plot_flat(phc, show_title=False, save=False, filename='flat_phc_plot'):
     # Configure the axes
     plt.ylabel('kde')
     plt.xlabel('cell probability')
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(-3, 3),
+                         useMathText=True)
 
     if show_title:
         plt.title(f"The Distribution of Probability Within a Probabilistic Hypercube")
@@ -110,7 +118,9 @@ def phc_plot_flat(phc, show_title=False, save=False, filename='flat_phc_plot'):
 
     plt.show()
 
-def phc_plot_2d_dist(phc, demo, show_title=False, save=False, filename='2d_phc_plot_dist'):
+
+def phc_plot_2d_dist(phc, demo, show_title=False, save=False,
+                     filename='2d_phc_plot_dist'):
     """
     Plot the 3D probability distribution of a 2D PHC.
 
@@ -150,6 +160,8 @@ def phc_plot_2d_dist(phc, demo, show_title=False, save=False, filename='2d_phc_p
     # Configure the axes
     ax.view_init(30, 30)
     ax.invert_xaxis()
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(-3, 3),
+                         useMathText=True)
 
     demo_groups = list(demo)
     ax.set_xlabel(f"{demo_groups[0]} voting index")
@@ -164,7 +176,9 @@ def phc_plot_2d_dist(phc, demo, show_title=False, save=False, filename='2d_phc_p
 
     plt.show()
 
-def phc_plot_2d(phc, demo, show_title=False, save=False, filename='2d_phc_plot'):
+
+def phc_plot_2d(phc, demo, show_title=False, save=False,
+                filename='2d_phc_plot'):
     """
     Plot the 2D probabilistic hypercube.
 
@@ -186,6 +200,8 @@ def phc_plot_2d(phc, demo, show_title=False, save=False, filename='2d_phc_plot')
     demo_groups = list(demo)
     plt.xlabel(f"{demo_groups[0]} voting index")
     plt.ylabel(f"{demo_groups[1]} voting index")
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(-3, 3),
+                         useMathText=True)
 
     # Configure the colorbar
     phc_min = tf.math.reduce_min(phc)
@@ -208,7 +224,9 @@ def phc_plot_2d(phc, demo, show_title=False, save=False, filename='2d_phc_plot')
 
     plt.show()
 
-def phc_plot_3d(phc, demo, show_title=False, save=False, filename='3d_phc_plot'):
+
+def phc_plot_3d(phc, demo, show_title=False, save=False,
+                filename='3d_phc_plot'):
     """
     Plot the 3D probabilistic hypercube.
 
@@ -288,6 +306,8 @@ def phc_plot_3d(phc, demo, show_title=False, save=False, filename='3d_phc_plot')
     ax.set_xlim(axes_lim)
     ax.set_ylim(axes_lim)
     ax.set_zlim(axes_lim)
+    plt.ticklabel_format(style='sci', axis='both', scilimits=(-3, 3),
+                         useMathText=True)
 
     ax.invert_xaxis()
 

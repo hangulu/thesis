@@ -59,7 +59,8 @@ class Election:
         outcome (dict): the outcome of the election, per precinct
     """
 
-    def __init__(self, candidates, demo_per_prec, name=None, cand_vote_totals=None, demo_vote_prob=None, mock=True):
+    def __init__(self, candidates, demo_per_prec, name=None,
+                 cand_vote_totals=None, demo_vote_prob=None, mock=True):
         # Intialize the variables
         # Always present
         self.name = name
