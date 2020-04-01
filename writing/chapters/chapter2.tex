@@ -1,4 +1,4 @@
-%!TEX root = ../dissertation.tex
+%!TEX root = ../thesis.tex
 \begin{savequote}[75mm]
 This is some random quote to start off the chapter.
 \qauthor{Firstname lastname}
@@ -6,21 +6,34 @@ This is some random quote to start off the chapter.
 
 \chapter{Methods}
 
-All of the methods discussed are implemented in Python, and can be found in the repository noted in the \hyperref[sec:appendix]{appendix}.
-
-The Discrete Voter Model can be divided into $5$ subroutines, each discussed below:
+The Discrete Voter Model is implemented in Python 3, and the accompanying code is found in the repository noted in \hyperref[chap:appendix]{Appendix A}. A set of $6$ modules supports the Discrete Voter Model, with each implementing an aspect of the statistical framework. Those modules are:
 
 \begin{enumerate}
-  \item \texttt{make\_grid}: create a probabilistic hypercube: an $\mathbf{R}^n$ array of values, $\omega$, that all sum to $1$
-  \item \texttt{shift\_weight}: shift weight in a hypercube reversibly
-  \item \texttt{expec\_votes}: given a hypercube, a candidate, and a district description, output the expectation of votes that candidate received
-  \item \texttt{prob\_votes}: given a hypercube, a candidate, a district description, and the observed vote outcomes, output the probability of seeing that outcome
-  \item \texttt{mcmc}: run a Markov Chain Monte Carlo method on a state space of hypercubes
+  \item \texttt{phc}: creates probabilistic hypercubes
+  \item \texttt{expec\_votes}: finds the expectation of votes for a candidate
+  \item \texttt{prob\_votes}: finds the probability of an electoral outcome
+  \item \texttt{elect}: aggregates election and electorate data
+  \item \texttt{tools}: provides auxiliary functions for the model
+  \item \texttt{dvm}: executes the Markov chain on a state space of hypercubes
 \end{enumerate}
 
+The modules work together to run the Discrete Voter Model on an \texttt{Election} object to generate a distribution of probabilistic hypercubes for the election. Each probabilistic hypercube encodes a probability distribution within a potential precinct of the district, and is used to extract the likely demographic voting probabilities.
 
-\texttt{make\_grid}
+These demographic voting probabilities are the goal of the ecological inference, and provide information to answer whether voting in an election is polarized by race.
 
+\section{phc}
+
+\newthought{The Discrete Voter Model} introduces the probabilistic hypercube (PHC) to represent the distribution of possible demographic voting probabilities in a precinct.
+
+A probabilistic hypercube is defined as a rank $n$ tensor (matrix, multidimensional array, or holor) in $\mathbb{R}^n$ space with the following characteristics:
+\begin{enumerate}
+  \item the component values of the cells sum to $1$
+  \item each dimension corresponds to a demographic group in an electorate
+  \item each cell's position, or index, represents the demographic voting probabilities of a precinct
+  \item each cell's component value represents the inferred probability of that cell representing the true demographic voting probability of a precinct
+\end{enumerate}
+
+One derives the demographic voting probabilities (DVP) by
 
 The \texttt{make\_grid} subroutine starts the discretization by initializing an $R^n$ space as a probabilistic hypercube (or grid in the $2$-dimensional case), where $n$ is the number of demographic or racial groups in the electorate.
 

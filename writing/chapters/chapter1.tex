@@ -1,7 +1,7 @@
 %!TEX root = ../thesis.tex
 \begin{savequote}[75mm]
-Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
-\qauthor{Quoteauthor Lastname}
+tbd
+\qauthor{tbd}
 \end{savequote}
 
 \chapter{Background and Literature Review}
@@ -24,7 +24,7 @@ This means, practically, that in order to win a lawsuit plaintiffs must prove th
 
 \subsection{Estimating Racially Polarized Voting}
 
-Although racially polarized voting is critically important to racial gerrymandering litigation, it is quite difficult to prove. The \textit{secret ballot}, an essential part of the United States' democracy, ensures that one's vote is anonymous. Hence, any data collection around voting patterns that separates along any axis of identity, is impossible, and all information about those voting patterns must be inferred.
+\newthought{Although} racially polarized voting is critically important to racial gerrymandering litigation, it is quite difficult to prove. The \textit{secret ballot}, an essential part of the United States' democracy, ensures that one's vote is anonymous. Hence, any data collection around voting patterns that separates along any axis of identity, is impossible, and all information about those voting patterns must be inferred.
 
 The \textit{Gingles} decision noted that two techniques were ``standard in the literature for the analysis of racially polarized voting"\cite{thornburg}: bivariate ecological regression and homogeneous precincts.
 
@@ -93,7 +93,7 @@ Professor Gary King developed and proposed his own method to solve this problem 
 
 \subsection{King's Ecological Inference}
 
-Professor King introduced his method to solve the ecological inference problem in his 1997 book \textit{A Solution to the Ecological Inference Problem: Reconstructing Individual Behavior from Aggregate Data}\cite{king1997}. His method, which he expands upon with several papers from 1997 to the late 2000s, uses Bayesian inference and bounds methods to infer the values of the empty cells in Table \ref{table:ei_example}.
+\newthought{Professor King} introduced his method to solve the ecological inference problem in his 1997 book \textit{A Solution to the Ecological Inference Problem: Reconstructing Individual Behavior from Aggregate Data}\cite{king1997}. His method, which he expands upon with several papers from 1997 to the late 2000s, uses Bayesian inference and bounds methods to infer the values of the empty cells in Table \ref{table:ei_example}.
 
 Using Table \ref{table:ei_example} as a reference, Table \ref{table:ei_quantities} describes the quantities that King used to describe this problem\cite{king1999}.
 
@@ -160,7 +160,7 @@ Hence, although King's method has proved quite useful for some cases of ecologic
 
 \section{Discretization}
 
-King's method assumes the quantities of interest, the demographic voting patterns of a district, can be modeled completely with Beta distributions. The hierarchical model allows some freedom to those distributions, generating their parameters from Exponential distributions.
+\newthought{King's method} assumes the quantities of interest, the demographic voting patterns of a district, can be modeled completely with Beta distributions. The hierarchical model allows some freedom to those distributions, generating their parameters from Exponential distributions.
 
 Beta distributions are known to be approximately bimodal if both shape parameters are below $1$. However, Beta distributions can never be \textit{fully} bimodal, which is the expectation for racially polarized voting: that two different groups vote quite differently. Figure \ref{fig:beta_example} is an example of a very, but not fully, bimodal Beta distribution.
 
@@ -219,18 +219,24 @@ The differences in transition kernels, $Q(x, \cdot)$, and acceptance probability
 
 \subsection{Random Walk Metropolis}
 
-One Markov chain Monte Carlo method which uses the Random Walk Metropolis transition kernel is the Metropolis-Hastings algorithm. Metropolis-Hastings is one of the simplest MCMC methods, but is still quite reliable and widely used for many applications.
+\newthought{One Markov chain Monte Carlo method} which uses the Random Walk Metropolis transition kernel is the Metropolis-Hastings algorithm. Metropolis-Hastings is one of the simplest MCMC methods, but is still quite reliable and widely used for many applications.
 
-This transition kernel requires that $q(x, y) = q(y - x)$. This is one way to ensure that the chain is detail balanced, a necessary condition for the chain to converge to the target distribution.\cite{mcmc_rwm}. Examples of such distributions are $Q(x, \cdot) = N(x, \sigma^2)$ and $Q(x, \cdot) = Uniform(x - 1, x + 1)$. The Discrete Voter Model uses the Normal proposal.
+This transition kernel requires that $q(x, y) = q(y - x)$. This is one way to ensure that the chain is reversible and detail balanced, necessary conditions for the chain to converge to the target distribution.\cite{mcmc_rwm}. Examples of such distributions are $Q(x, \cdot) = N(x, \sigma^2)$ and $Q(x, \cdot) = Uniform(x - 1, x + 1)$.
+
+The Discrete Voter Mode's proposal randomly selects two cells in the probability hypercube, and adds a small value, $\epsilon$, to one and subtracts it from the other. This is a reversible chain -- one could get theoretically get back to the probability hypercube that was changed later in the chain -- which is essential for convergence.\cite{mcmc_history}
 
 \subsection{Hamiltonian Monte Carlo}
 
+\newthought{Hamiltonian Monte Carlo} (HMC) differs from Random Walk Metropolis in that its proposal distribution adapts to the current state and its position in the parameter space.\cite{hmc_theory}
 
-MCMC algorithms differ from each other in several key ways, with the primary being how
+HMC uses the gradient of the target distribution's density, and adapts the proposal distribution toward that direction. This helps combat some of the inefficiencies of Random Walk Metropolis, like its tendency to explore parts of the state space where there is very little probability density. Hence, fewer samples have to be created to approximate the target distribution.
 
-The Discrete Voter Model uses two types of MCMC algorithms, each differing
+The ``Hamiltonian" in ``Hamiltonian Monte Carlo" refers to the inspiration of this kernel: Hamiltonian mechanics, a reformation of Newtonian mechanics that reconsiders the basis of time evolution of a system.\cite{hamiltonian} This kernel generates some \textit{potential function/energy} from the target density, then uses the curvature of that function, some random seed, and the current state to determine the candidate for the next state.\cite{mcmc_hmc}
 
+The primary benefit of HMC to the Discrete Voter Model is that it can theoretically produce a better sample of the target distribution with fewer steps in the algorithm. In addition, HMC has been shown to work well on state spaces with many parameters, like the potentially large probability hypercubes in this model.\cite{mcmc_hmc}
 
-In theory, by the Markov chain central limit theorem, MCMC guarantees convergence and accurate sampling with the correct specifications. Furthermore, the chains are robust to their assumptions, in that they often converge to reliable samples in enough time even when assumptions are broken. Their main disadvantages are that it is difficult to assess convergence for complex distributions and the methods themselves are computationally expensive. However, given the increasing availability of computing power, these methods can be more widely applied.
+\subsection{Robustness}
 
-Hence, these methods are well-suited to the problem of ecological inference, and are implemented in the Discrete Voter Model.
+\newthought{The Markov chain Central Limit Theorem} guarantees convergence and accurate sampling with the correct specifications.\cite{mcmc_history} Furthermore, for both the kernels above, chains are robust to their assumptions -- they often converge to reliable samples in enough time, even when assumptions (like a perfectly ergodic chain) are broken.
+
+The main disadvantages of using Markov chains for such complex state spaces are that it is difficult to assess convergence, and the methods themselves are computationally expensive. However, given the increasing availability of computing power, including the prevalence of GPU-based computing and the maturity of programming packages like \texttt{Stan}, \texttt{PyMC3}, and \texttt{TensorFlow Probability}, these methods can be more widely applied.

@@ -237,7 +237,7 @@ tabsize=2, % Number of spaces per tab in the code
     colorlinks,
     citecolor=SchoolColor,
     filecolor=black,
-    linkcolor=black,
+    linkcolor=SchoolColor,
     urlcolor=SchoolColor,
 }
 
