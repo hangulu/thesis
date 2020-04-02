@@ -72,6 +72,9 @@
 \RequirePackage{setspace}
 \RequirePackage{verbatim}
 
+% Math
+\usepackage{amsmath}
+
 % Fonts.
 \RequirePackage{color}
 \RequirePackage{xcolor}
@@ -79,7 +82,7 @@
 \RequirePackage{url}
 \RequirePackage{amssymb}
 \RequirePackage{mathspec}
-\setmathsfont(Digits,Latin,Greek)[Numbers={Proportional}]{EB Garamond}
+\setmathsfont(Digits,Latin,Greek)[Numbers={Proportional}]{Times}
 \setmathrm{EB Garamond}
 \AtBeginEnvironment{tabular}{\addfontfeature{RawFeature=+tnum}}
 \widowpenalty=300

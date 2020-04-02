@@ -23,9 +23,9 @@ These demographic voting probabilities are the goal of the ecological inference,
 
 \section{phc}
 
-\newthought{The Discrete Voter Model} introduces the probabilistic hypercube (PHC) to represent the distribution of possible demographic voting probabilities in a precinct.
+\newthought{The Discrete Voter Model} introduces the probabilistic hypercube (PHC) to represent the distribution of possible demographic voting probabilities in a precinct, for a candidate.
 
-A probabilistic hypercube is defined as a rank $n$ tensor (matrix, multidimensional array, or holor) in $\mathbb{R}^n$ space with the following characteristics:
+A probabilistic hypercube (PHC) is defined as a rank $n$ tensor (matrix, multidimensional array, or holor) in $\mathbb{R}^n$ space with the following characteristics:
 \begin{enumerate}
   \item the component values of the cells sum to $1$
   \item each dimension corresponds to a demographic group in an electorate
@@ -33,39 +33,48 @@ A probabilistic hypercube is defined as a rank $n$ tensor (matrix, multidimensio
   \item each cell's component value represents the inferred probability of that cell representing the true demographic voting probability of a precinct
 \end{enumerate}
 
-One derives the demographic voting probabilities (DVP) by
+The function \texttt{make\_phc} initializes a PHC with either random or uniform cell components. The rank of the PHC corresponds to the number of demographic groups being analyzed by the model. The size of each dimension is the \textit{granularity} of the discretization, and thus the model.
 
-The \texttt{make\_grid} subroutine starts the discretization by initializing an $R^n$ space as a probabilistic hypercube (or grid in the $2$-dimensional case), where $n$ is the number of demographic or racial groups in the electorate.
+For example, a PHC with granularity $100$ meant to represent $3$ demographic groups will have the shape $(100, 100, 100)$, and can be thought of as a $100 \times 100 \times 100$ matrix.
 
-This hypercube represents the probability distribution of the voting patterns of different demographic groups in a precinct. Each cell in the hypercube corresponds to some collection of $b_i$, the unobserved quantity of interest from King's specification and the necessary quantity for determining racially polarized voting. The cell itself contains the probability of it being the collection that produced the observed outcomes.
+The demographic voting probabilities (DVP), the collection of $b_i$ from King's model specification, are derived for a cell directly from that cell's position within the PHC. The higher a cell is along a dimension of the tensor, the higher the probability that members of that dimension's corresponding demographic group will vote for a candidate.
 
-The following four subroutines support and implement the MCMC section of the Discrete Voter Model.
+For example, in a precinct with $2$ demographic groups, and in a PHC with granularity $10$, a cell at the position $10, 0$ represents $\frac{10}{10} = 100 \%$ of demographic group $1$ voting for the candidate, and $\frac{0}{10} = 0 \%$ of demographic group $2$ voting for the candidate.
+
+In general, in some PHC with granularity $d$ representing $n$ demographic groups, for some cell at index $\{i_0, i_1, i_2, \dots, i_n\} = \left\{i_j\right\}_{j=0}^n$:
+
+$$\text{DVP} = \left\{\frac{i_j}{d}\right\}_{j=0}^n$$
+
+When given a precinct, candidate, and some PHC, one can determine the demographic voting probability of the precinct for the candidate by sampling a cell, or set of cells, from the PHC randomly, using the cell's component values as probabilities. The higher the component value of a cell, the more likely it is to be chosen to be the inferred demographic voting probability of the given precinct and candidate.
+
+The granularity of the discretization is directly related to how precise the demographic voting probabilities are. In general, the higher the granularity of a PHC, the more precise its predictions may be. However, higher granularity PHCs have many more cells, and thus parameters, making sampling time/computing intensive.
+
+Figure \ref{fig:3d_phc_plot_example} is a rendering of a rank $3$, granularity $10$ PHC, with the dimensions corresponding to the Latinx, white, and Black members of an electorate. Figure \ref{fig:2d_phc_plot_example} is a similar rendering, but of a rank $2$, granularity $10$ PHC, with the dimensions corresponding to the white and Black members of an electorate. In each, the cells are colored according to their component values, or probabilities -- the more yellow and opaque a cell, the higher the probability is in that cell.
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/3d_phc_plot_example.png}
+ \caption{Example of a Rank $3$, Granularity $10$ Probabilistic Hypercube}
+ \label{fig:3d_phc_plot_example}
+\end{figure}
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/2d_phc_plot_example.png}
+ \caption{Example of a Rank $2$, Granularity $10$ Probabilistic Hypercube}
+ \label{fig:2d_phc_plot_example}
+\end{figure}
+
+The rank $2$ case can also be visualized as a $3$-dimensional plot, where the third dimension is the probability associated with the cells of the PHC. Figure \ref{fig:2d_phc_plot_dist_example} illustrates this.
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/2d_phc_plot_dist_example.png}
+ \caption{The Probability Distribution within of a Rank $2$, Granularity $10$ Probabilistic Hypercube}
+ \label{fig:2d_phc_plot_dist_example}
+\end{figure}
+
+Higher rank PHCs are difficult to visualize in similar ways, but the representational and intrinsic characteristics of the probability hypercube remain the same. This is critical to the Discrete Voter Model's ability to generalize to arbitrarily diverse electorates, with arbitrarily precise demographic voting probabilities.
 
 
-\texttt{shift\_weight}
-
-
-The \texttt{shift\_weight} subroutine implements the proposal step of the MCMC method. It reversibly shifts the weight of the hypercube to create another hypercube. \textit{Reversibility} refers to an assumption of MCMC that guarantees convergence. A Markov chain is said to be reversible if there is a probability distribution, $\pi$, over the states such that:
-
-$$\pi_i \text{Pr}(X_{n+1} = j | X_n = i) = \pi_j \text{Pr}(X_{n+1} = i | X_n = j)$$
-
-for all iterations $n$ and all states $i$ and $j$. This is also called the \textit{detailed balance} condition.
-
-\texttt{shift\_weight} allows for $5$ types of shifting:
-
-\begin{enumerate}
-  \item \texttt{uniform}: add a uniform random hypercube to the hypercube
-  \item \texttt{single\_uniform}: add a single uniform random variable to each cell in the hypercube
-  \item \texttt{shuffle}: shuffle the hypercube randomly
-  \item \texttt{right}: shift weight in the hypercube to the right
-  \item \texttt{left}: shift weight in the hypercube to the left
-\end{enumerate}
-
-Each of the above types of shifting is reversible, with the \texttt{uniform} as the default method. At each step of the chain, the algorithm uses this subroutine to propose a new hypercube.
-
-
-\texttt{expec\_votes}
-
+\section{expec\_votes}
 
 This is the first of two subroutines that score a candidate hypercube in every step of the Markov chain.
 
@@ -93,8 +102,7 @@ The expectation of a hypercube is thus given by Equation \ref{eq:expec_votes}.
 This expectation is then compared to the observed outcome of votes, with the $L1$-norm (absolute value). The lower the norm, the better the hypercube, and the more likely it will be accepted in the Markov chain.
 
 
-\texttt{prob\_votes}
-
+\section{prob\_votes}
 
 The is the second of two subroutines that score a candidate hypercube in every step of the Markov chain.
 
@@ -126,9 +134,10 @@ The code for this partitioning process can be found in the appendix, as Listing 
 
 The probability of some candidate hypercube producing the electoral outcome given by that expression is then compared to the probability that the current hypercube produced the outcome, and the candidate is accepted if the probability is higher, or with some acceptance probability if lower.
 
+\section{elect}
 
-\texttt{mcmc}
 
+\section{dvm}
 
 The final subroutine, \texttt{mcmc}, runs the Markov chain Monte Carlo method with the Metropolis-Hastings algorithm, employing either \texttt{expec\_votes} or \texttt{prob\_votes} to score candidates.
 
@@ -149,7 +158,29 @@ The algorithm is as follows:
 The subroutine returns a collection of the best scoring hypercube, the highest score it received, and a list of all the hypercubes explored and their scores.
 
 
-\newthought{Evaluation}
+\texttt{shift\_weight}
+
+
+The \texttt{shift\_weight} subroutine implements the proposal step of the MCMC method. It reversibly shifts the weight of the hypercube to create another hypercube. \textit{Reversibility} refers to an assumption of MCMC that guarantees convergence. A Markov chain is said to be reversible if there is a probability distribution, $\pi$, over the states such that:
+
+$$\pi_i \text{Pr}(X_{n+1} = j | X_n = i) = \pi_j \text{Pr}(X_{n+1} = i | X_n = j)$$
+
+for all iterations $n$ and all states $i$ and $j$. This is also called the \textit{detailed balance} condition.
+
+\texttt{shift\_weight} allows for $5$ types of shifting:
+
+\begin{enumerate}
+  \item \texttt{uniform}: add a uniform random hypercube to the hypercube
+  \item \texttt{single\_uniform}: add a single uniform random variable to each cell in the hypercube
+  \item \texttt{shuffle}: shuffle the hypercube randomly
+  \item \texttt{right}: shift weight in the hypercube to the right
+  \item \texttt{left}: shift weight in the hypercube to the left
+\end{enumerate}
+
+Each of the above types of shifting is reversible, with the \texttt{uniform} as the default method. At each step of the chain, the algorithm uses this subroutine to propose a new hypercube.
+
+
+\section{Evaluation}
 
 All of the methods for inferring racially polarized voting noted above, including ecological regression, homoegenous precincts, and King's EI, are necessarily imperfect -- as is the Discrete Voter Model. The extent of that imperfection, however, can be evaluated and compared.
 
