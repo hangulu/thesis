@@ -75,6 +75,13 @@
 % Math
 \usepackage{amsmath}
 
+% Figures
+\usepackage[section]{placeins}
+
+% Lists
+\usepackage{enumitem}
+\setlist{nosep}
+
 % Fonts.
 \RequirePackage{color}
 \RequirePackage{xcolor}
@@ -159,8 +166,8 @@ tabsize=2, % Number of spaces per tab in the code
 \usepackage[titletoc]{appendix}
 \renewcommand{\cftsecleader}{\cftdotfill{\cftdotsep}}
 \renewcommand{\cftchapfont}{\normalsize \scshape}
-\renewcommand\listfigurename{Listing of figures}
-\renewcommand\listtablename{Listing of tables}
+\renewcommand\listfigurename{List of Figures}
+\renewcommand\listtablename{List of Tables}
 
 % Endmatter
 \renewcommand{\setthesection}{\arabic{chapter}.A\arabic{section}}
@@ -251,8 +258,9 @@ tabsize=2, % Number of spaces per tab in the code
 	\maketitle
 	\copyrightpage
 	\abstractpage
-    \contentspage
-	% \listoffigures % optional
+  \contentspage
+  \listoftables
+	\listoffigures
 	\dedicationpage
 	\acknowledgments
 }
