@@ -50,13 +50,17 @@ class Election:
         candidates (string list): the candidates
         dpp (dict): Demographics Per Precinct: the demographics of the
         electorate, per precinct
-        winner (string): the candidate with the most votes
-        vote_totals (dict): the vote totals of each candidate in the
-        election, per precinct
         dvp (dict): Demographic Voting Probabilities: the theoretical voting
         percentages of each demographic group, for each candidate in each
         precinct
+        mock (bool): whether the election is a mock election
+        name (string): the name of the election
+        num_demo_groups (int): the number of demographic groups in the district
         outcome (dict): the outcome of the election, per precinct
+        precincts (string list): the precinct IDs
+        vote_totals (dict): the vote totals of each candidate in the
+        election, per precinct
+        winner (string): the candidate with the most votes
     """
 
     def __init__(self, candidates, demo_per_prec, name=None,

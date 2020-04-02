@@ -74,8 +74,8 @@ def prob_from_expec(phc, demo, observed, rwm=False):
     observed (int): the observed number of votes the candidate received
     rwm (bool): whether this function serves the RWM or HMC kernel
 
-    return: the complement of the sigmoid function applied to the
-    difference in expectation
+    return: the similarity of the expectation to the vote outcome, as a log
+    probability
     """
     expectation = expec_votes(phc, demo, rwm=rwm)
     return tf.math.log(1 / (abs(observed - expectation) + 1))
