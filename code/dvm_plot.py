@@ -45,7 +45,7 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False,
             ylabel = 'probability'
         else:
             title = 'A Trace of the Sigmoid Difference in Expectation\n of a Probabilistic Hypercube With The Electoral Outcome'
-            ylabel = 'sigmoid difference in expectation'
+            ylabel = 'transfored difference in expectation'
 
     else:
         key = 'log_accept_trace'
@@ -79,7 +79,7 @@ def trace_plot(chain_results, trace='prob', show_title=False, save=False,
         filename = key + '_plot'
 
     if save:
-        plt.savefig(f"images/{filename}.png", dpi=300)
+        plt.savefig(f"images/{filename}.png", dpi=300, bbox_inches='tight')
 
     plt.show()
 
@@ -322,6 +322,6 @@ def phc_plot_3d(phc, demo, show_title=False, save=False,
         plt.title(f"The 3D Probabilistic Hypercube")
 
     if save:
-        plt.savefig(f"images/{filename}.png", dpi=300)
+        plt.savefig(f"images/{filename}.png", dpi=300, bbox_inches='tight')
 
     plt.show()
