@@ -1,5 +1,5 @@
-## The Racial Voting Power Gap
-### Analyzing Racial Gerrymandering Through Solving Ecological Inference with The Discrete Voter Model
+## The Voting Power Gap
+### Identifying Racial Gerrymandering with a Discrete Voter Model
 
 Hakeem Angulu's undergraduate thesis for the departments of Computer Science and Statistics at Harvard College.
 
@@ -17,4 +17,4 @@ In the 1990s and early 2000s, Professor Gary King’s ecological inference metho
 
 A new method of solving the ecological inference problem, using a mixture of contemporary statistical computing techniques, is demonstrated here. It is called the **Discrete Voter Model**. It can be used for multiple racial groups and candidates, and is shown to work well on randomly-generated mock election data.
 
-To completely reproduce test results on generated election data, run `methods.ipynb` in full. The requirements can be installed with the included `Pipfile`. Go [here](https://realpython.com/pipenv-guide/) or [here](https://pipenv.kennethreitz.org/en/latest/) for more information on how to use `Pipenv`.
+To completely reproduce test results on mock and real election data, run `methods.ipynb`, `mock_exeriments.ipynb`, and `case_experiments.ipynb` in full. The requirements can be installed with the included `Pipfile`. Go [here](https://realpython.com/pipenv-guide/) or [here](https://pipenv.kennethreitz.org/en/latest/) for more information on how to use `Pipenv`.
