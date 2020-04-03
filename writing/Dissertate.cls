@@ -77,6 +77,7 @@
 
 % Figures
 \usepackage[section]{placeins}
+\usepackage[justification=centering]{caption}
 
 % Lists
 \usepackage{enumitem}

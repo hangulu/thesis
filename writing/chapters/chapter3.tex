@@ -7,13 +7,44 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 \chapter{Results}
 \label{chap:results}
 
-\newthought{Experiment Specification}
+\newthought{Several experiments} were designed to evaluate the performance of the Discrete Voter Model. Two case studies, on elections in Chicago, were chosen to demonstrate DVM's performance on real data.
 
-\bm{$2 \times 2$} \textbf{Case}
+\section{Experiment Specification}
+\label{sec:exper_spec}
 
-For the $2$ demographic group case, $5$ random elections were generated for each of the demographic distributions of the precicnt in Table \ref{table:demo_dist} for precincts of size $100$. Each of these distributions is labeled $d_i \forall i \in [1, 3]$ (without loss of generality) for reference in Table \ref{table:results}.
+The Discrete Voter Model was evaluated on the $2 \times 2$ case (i.e. $2$ candidates and $2$ demographic groups) and the $3 \times 2$ case that was untenable for previous methods of determining racially polarized voting.
 
-The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{table:voting}. Each of these voting patterns is labeled $v_i \forall i \in [1, 2]$ (without loss of generality) for reference in Table \ref{table:results}.
+The Discrete Voter Model was run on mock \texttt{Election} created with the specifications in Subsections \ref{subsec:two_by_two} and \ref{subsec:three_by_two}, using \texttt{dvm\_evaluator}. All other variables are in Table \ref{table:dvm_vars}.
+
+\begin{table}[ht]
+ \centering
+ \caption{Non-Election Variables for DVM Experiments}
+ \label{table:dvm_vars}
+ \begin{tabular}{|l|c|c|}
+   \hline
+   \multicolumn{1}{|c}{Variable} & \multicolumn{1}{|c|}{option $1$}& \multicolumn{1}{c|}{option $2$} \\
+   \hline
+   number of MCMC steps, $t$ & $1000$ & $10000$ \\
+   granularity of the PHCs, $g$ & $10$ & $100$ \\
+   scoring function & \texttt{expec\_votes} & \texttt{prob\_votes} \\
+   kernel & Random Walk Metropolis & Hamiltonian Monte Carlo \\
+  \hline
+ \end{tabular}
+\end{table}
+
+Not all combinations of variables proved feasible for the scope of these experiments. Some, like using the Hamiltonian Monte Carlo kernel with the \texttt{prob\_votes} scoring function for $10000$ steps on a set of granularity $100$ PHCs, were infeasible. The combinations that were run are presented in Section \ref{sec:exper_results}.
+
+
+\subsection{$2 \times 2$}
+\label{subsec:two_by_two}
+
+For this case, $6$ mock elections were created for single-precinct districts of size $100$, with $2$ demographic groups, $g_1$ and $g_2$, and two candidates, $a$ and $b$.
+
+Each of the $6$ has one of the $3$ demographic distributions of the district in Table \ref{table:demo_dist}. Each of these distributions is labeled $\{d_i\}_{i=1}^3$ for reference in Section \ref{sec:exper_results}.
+
+Each of the $6$ has one of the $2$ demographic voting probabilities for candidates $a$ and $b$ in Table \ref{table:voting}. Each of these voting patterns is labeled $\{v_i\}_{i=1}^2$ for reference in Section \ref{sec:exper_results}.
+
+The demographic voting probabilities and demographic distributions were combined to create the $6$ unique elections.
 
 \begin{table}[ht]
  \centering
@@ -21,7 +52,7 @@ The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{ta
  \label{table:demo_dist}
  \begin{tabular}{|c|c|c|}
    \hline
-   Label & Group $1$ ($\%$) & Group $2$ ($\%$) \\
+   Label & $g_1$ ($\%$) & $g_2$ ($\%$) \\
    \hline
    $d_1$ & $50$ & $50$ \\
    $d_2$ & $25$ & $75$ \\
@@ -32,26 +63,36 @@ The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{ta
 
 \begin{table}[ht]
  \centering
- \caption{Demographic Voting Patterns Tested in the $2 \times 2$ Case}
+ \caption{Demographic Voting Probabilities Tested in the $2 \times 2$ Case}
  \label{table:voting}
  \begin{tabular}{|c|c|c|c|}
    \hline
-   Label & Group & Cand. $a$ ($\%$) & Cand. $b$ ($\%$) \\
+   Label & Group & $a$ ($\%$) & $b$ ($\%$) \\
    \hline
-   \multirow{2}{*}{$v_1$} & $1$ & $50$ & $50$ \\
-   & $2$ & $30$ & $70$ \\
+   \multirow{2}{*}{$v_1$} & $g_1$ & $50$ & $50$ \\
+   & $g_2$ & $30$ & $70$ \\
    \hline
-   \multirow{2}{*}{$v_2$} & $1$ & $25$ & $75$ \\
-   & $2$ & $20$ & $80$ \\
+   \multirow{2}{*}{$v_2$} & $g_1$ & $25$ & $75$ \\
+   & $g_2$ & $20$ & $80$ \\
   \hline
  \end{tabular}
 \end{table}
 
-\bm{$3 \times 2$} \textbf{Case}
+The model was run on each election $5$ times, with a combination of the variables for either $1000$ or $10000$ steps with both granularity $10$ and granularity $100$ probabilistic hypercubes, using both the Hamiltonian Monte Carlo and Random Walk Metropolis kernels.
 
-For the $3$ demographic group cases, $5$ random elections were generated for each of the demographic distributions of the precinct in Table \ref{table:demo_dist_3} precincts of size $100$. Each of these distributions is labeled $d_i \forall i \in [4, 6]$ (without loss of generality) for reference in Table \ref{table:results}.
+These elections were also used to evaluate King's Ecological Inference method, using the \texttt{kei\_evaluator} function.
 
-The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{table:voting_3}. Each of these voting patterns is labeled $v_i \forall i \in [3, 4]$ (without loss of generality) for reference in Table \ref{table:results}.
+\FloatBarrier
+\subsection{$3 \times 2$}
+\label{subsec:three_by_two}
+
+For this case, $6$ mock elections were created for single-precinct districts of size $100$, with $3$ demographic groups, $g_1$, $g_2$ and $g_3$, and two candidates, $a$ and $b$.
+
+Each of the $6$ has one of the $3$ demographic distributions of the district in Table \ref{table:demo_dist}. Each of these distributions is labeled $\{d_i\}_{i=4}^6$ for reference in Section \ref{sec:exper_results}.
+
+Each of the $6$ has one of the $2$ demographic voting probabilities for candidates $a$ and $b$ in Table \ref{table:voting}. Each of these voting patterns is labeled $\{v_i\}_{i=3}^4$ for reference in Section \ref{sec:exper_results}.
+
+The demographic voting probabilities and demographic distributions were combined to create the $6$ unique elections.
 
 \begin{table}[ht]
  \centering
@@ -59,7 +100,7 @@ The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{ta
  \label{table:demo_dist_3}
  \begin{tabular}{|c|c|c|c|}
    \hline
-   Label & Group $1$ ($\%$) & Group $2$ ($\%$) & Group $3$ ($\%$) \\
+   Label & $g_1$ ($\%$) & $g_2$ ($\%$) & $g_3$ ($\%$) \\
    \hline
    $d_4$ & $50$ & $50$ & $0$ \\
    $d_5$ & $25$ & $25$ & $50$ \\
@@ -70,59 +111,99 @@ The true demographic voting patterns for candidates $a$ and $b$ in Table \ref{ta
 
 \begin{table}[ht]
  \centering
- \caption{Demographic Voting Patterns Tested in the $3 \times 2$ Case}
+ \caption{Demographic Voting Probabilities Tested in the $3 \times 2$ Case}
  \label{table:voting_3}
  \begin{tabular}{|c|c|c|c|}
    \hline
-   Label & Group & Cand. $a$ ($\%$) & Cand. $b$ ($\%$) \\
+   Label & Group & $a$ ($\%$) & $b$ ($\%$) \\
    \hline
-   \multirow{3}{*}{$v_3$} & $1$ & $20$ & $80$ \\
-   & $2$ & $80$ & $20$ \\
-   & $3$ & $40$ & $60$ \\
+   \multirow{3}{*}{$v_3$} & $g_1$ & $20$ & $80$ \\
+   & $g_2$ & $80$ & $20$ \\
+   & $g_3$ & $40$ & $60$ \\
    \hline
-   \multirow{3}{*}{$v_4$} & $1$ & $30$ & $70$ \\
-   & $2$ & $40$ & $60$ \\
-   & $3$ & $50$ & $50$ \\
+   \multirow{3}{*}{$v_4$} & $g_1$ & $30$ & $70$ \\
+   & $g_2$ & $40$ & $60$ \\
+   & $g_3$ & $50$ & $50$ \\
   \hline
  \end{tabular}
 \end{table}
 
-\newthought{Accuracy and Runtime}
+\FloatBarrier
+\section{Experiment Results}
+\label{sec:exper_results}
 
-Accuracy is reported as the mean squared error (MSE) between the models' outputted demographic voting distribution and the true demographic voting distribution, averaged over all trials. The lower the MSE, the more accurate the model. The runtime is in seconds. The lower the runtime, the faster the model.
+\newthought{The} \texttt{dvm\_evaluator} and \texttt{kei\_evaluator} functions report two metrics: accuracy and runtime. The ``accuracy" of the model on a mock election is the average mean squared error (MSE) between the model's outputted demographic voting probabilities (DVP) and the DVP that generated the election data, stored in the \texttt{Election} objects. The MSE is averaged over all $5$ trials of the experiment. The lower the MSE, the more accurate the model. The ``runtime" of the model is how long, in seconds, the model took to generate its output. The lower the runtime, the faster the model.
 
-Table \ref{table:results} summarizes the results of running DVM and King's EI on all of the experiments, for a total of $12$ experiments replicated $5$ times each, in Python 3.7.4 on a 2018 MacBook Pro with a 2.3 GHz Quad-Core Intel Core i5 processor, 16 GB of 2133 MHz LPDDR3 RAM, and a Intel Iris Plus Graphics 655 1536 MB graphics card. All numbers are given with $3$ significant figures of precision. The DVM's MCMC was configured with $200$ steps, and the hypercubes had a granularity of $10$.
+Tables \ref{table:rwm_expec_2d} to \ref{table:hmc_3d} summarize the results of running the Discrete Voter Model and King's Ecological Inference method on all of the experiments, for a total of $66$ experiments replicated $5$ times each.
+
+In each table, $g$ is the granularity of the probability hypercube, and $t$ is the number of steps.
+
+The experiments were conducted in Python 3.7.4 on a 2018 MacBook Pro with a 2.3 GHz Quad-Core Intel Core i5 processor, 16 GB of 2133 MHz LPDDR3 RAM, and a Intel Iris Plus Graphics 655 1536 MB graphics card. All numbers are given with $3$ significant figures of precision.
+
+\subsection{Random Walk Metropolis in the $2 \times 2$ Case}
 
 \begin{table}[ht]
- \centering
- \caption{Accuracy and Runtime of the Discrete Voter Model (DVM) and King's EI (KEI)}
- \label{table:results}
- \begin{tabular}{|c|c|c|c|c|}
-   \hline
-   & \multicolumn{2}{|c|}{DVM} & \multicolumn{2}{|c|}{KEI} \\
-   \hline
-   Label & MSE & Runtime (s) & MSE & Runtime (s) \\
-   \hline
-   $d_1 \times v_1$ & $0.0825$ & $3.08$ & $0.0253$ & $13.9$ \\
-   $d_1 \times v_2$ & $0.0893$ & $3.04$ & $0.0589$ & $14.0$ \\
-   \hline
-   $d_2 \times v_1$ & $0.153$ & $4.05$ & $0.0665$ & $16.9$ \\
-   $d_2 \times v_2$ & $0.194$ & $2.89$ & $0.0604$ & $11.5$ \\
-   \hline
-   $d_3 \times v_1$ & $0.107$ & $2.74$ & $0.0134$ & $9.77$ \\
-   $d_3 \times v_2$ & $0.103$ & $2.72$ & $0.0620$ & $9.55$ \\
-   \hline
-   $d_4 \times v_3$ & $0.0692$ & $1500$ & - & - \\
-   $d_4 \times v_4$ & $0.0825$ & $1470$ & - & - \\
-   \hline
-   $d_5 \times v_3$ & $0.236$ & $1570$ & - & - \\
-   $d_5 \times v_4$ & $0.156$ & $1530$ & - & - \\
-   \hline
-   $d_6 \times v_3$ & $0.149$ & $1530$ & - & - \\
-   $d_6 \times v_4$ & $0.125$ & $1500$ & - & - \\
-  \hline
- \end{tabular}
+  \centering
+  \caption{Experiment Results for the RWM Kernel, Scoring by Expectation, for $2 \times 2$ Elections}
+  \label{table:rwm_expec_2d}
+  \input{tables/rwm_expec_2d.tex}
 \end{table}
+
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment Results for the RWM Kernel, Scoring by Probability, for $2 \times 2$ Elections}
+  \label{table:rwm_prob_2d}
+  \input{tables/rwm_prob_2d.tex}
+\end{table}
+
+
+\FloatBarrier
+\subsection{Hamiltonian Monte Carlo in the $2 \times 2$ Case}
+
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment Results for the HMC Kernel for $2 \times 2$ Elections}
+  \label{table:hmc_2d}
+  \input{tables/hmc_2d.tex}
+\end{table}
+
+
+\FloatBarrier
+\subsection{King's Ecological Inference Method in the $2 \times 2$ Case}
+
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment Results for King's Ecological Inference Method on $2 \times 2$ Elections}
+  \label{table:kei_results}
+  \input{tables/kei_results.tex}
+\end{table}
+
+
+\FloatBarrier
+\subsection{Random Walk Metropolis in the $3 \times 2$ Case}
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment Results for the RWM Kernel, Scoring by Expectation, for $3 \times 2$ Elections}
+  \label{table:rwm_3d}
+  \input{tables/rwm_3d.tex}
+\end{table}
+
+
+\FloatBarrier
+\subsection{Hamiltonian Monte Carlo in the $3 \times 2$ Case}
+
+
+\begin{table}[ht]
+  \centering
+  \caption{Experiment Results for the HMC Kernel, Scoring by Expectation, for $3 \times 2$ Elections}
+  \label{table:hmc_3d}
+  \input{tables/hmc_3d.tex}
+\end{table}
+
 
 In addition to the presentation of the numeric evaluation, a presentation of select visualizations of the models produced by the Discrete Voter Model show its expressive power.
 
