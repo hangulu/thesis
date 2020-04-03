@@ -7,14 +7,14 @@ Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin moles
 \chapter{Results}
 \label{chap:results}
 
-\newthought{Several experiments} were designed to evaluate the performance of the Discrete Voter Model. Two case studies, on elections in Chicago, were chosen to demonstrate DVM's performance on real data.
+\newthought{Several experiments} were designed to evaluate the performance of the Discrete Voter Model. Two case studies, on elections in Chicago, were chosen to demonstrate DVM's performance on real data. The case studies are discussed in the \hyperref[chap:discussion]{Discussion}, and the experiments' specification and results are below.
 
 \section{Experiment Specification}
 \label{sec:exper_spec}
 
-The Discrete Voter Model was evaluated on the $2 \times 2$ case (i.e. $2$ candidates and $2$ demographic groups) and the $3 \times 2$ case that was untenable for previous methods of determining racially polarized voting.
+\newthought{The Discrete Voter Model} was evaluated on the $2 \times 2$ case (i.e. $2$ candidates and $2$ demographic groups) and the $3 \times 2$ case that was untenable for previous methods of determining racially polarized voting.
 
-The Discrete Voter Model was run on mock \texttt{Election} created with the specifications in Subsections \ref{subsec:two_by_two} and \ref{subsec:three_by_two}, using \texttt{dvm\_evaluator}. All other variables are in Table \ref{table:dvm_vars}.
+The Discrete Voter Model was run on mock \texttt{Election} objects created with the specifications in Subsections \ref{subsec:two_by_two} and \ref{subsec:three_by_two}, using \texttt{dvm\_evaluator}. All other variables are in Table \ref{table:dvm_vars}.
 
 \begin{table}[ht]
  \centering
@@ -38,7 +38,7 @@ Not all combinations of variables proved feasible for the scope of these experim
 \subsection{$2 \times 2$}
 \label{subsec:two_by_two}
 
-For this case, $6$ mock elections were created for single-precinct districts of size $100$, with $2$ demographic groups, $g_1$ and $g_2$, and two candidates, $a$ and $b$.
+\newthought{For this case}, $6$ mock elections were created for single-precinct districts of size $100$, with $2$ demographic groups, $g_1$ and $g_2$, and two candidates, $a$ and $b$.
 
 Each of the $6$ has one of the $3$ demographic distributions of the district in Table \ref{table:demo_dist}. Each of these distributions is labeled $\{d_i\}_{i=1}^3$ for reference in Section \ref{sec:exper_results}.
 
@@ -78,15 +78,13 @@ The demographic voting probabilities and demographic distributions were combined
  \end{tabular}
 \end{table}
 
-The model was run on each election $5$ times, with a combination of the variables for either $1000$ or $10000$ steps with both granularity $10$ and granularity $100$ probabilistic hypercubes, using both the Hamiltonian Monte Carlo and Random Walk Metropolis kernels.
-
 These elections were also used to evaluate King's Ecological Inference method, using the \texttt{kei\_evaluator} function.
 
 \FloatBarrier
 \subsection{$3 \times 2$}
 \label{subsec:three_by_two}
 
-For this case, $6$ mock elections were created for single-precinct districts of size $100$, with $3$ demographic groups, $g_1$, $g_2$ and $g_3$, and two candidates, $a$ and $b$.
+\newthought{For this case}, $6$ mock elections were created for single-precinct districts of size $100$, with $3$ demographic groups, $g_1$, $g_2$ and $g_3$, and two candidates, $a$ and $b$.
 
 Each of the $6$ has one of the $3$ demographic distributions of the district in Table \ref{table:demo_dist}. Each of these distributions is labeled $\{d_i\}_{i=4}^6$ for reference in Section \ref{sec:exper_results}.
 
@@ -134,11 +132,13 @@ The demographic voting probabilities and demographic distributions were combined
 
 \newthought{The} \texttt{dvm\_evaluator} and \texttt{kei\_evaluator} functions report two metrics: accuracy and runtime. The ``accuracy" of the model on a mock election is the average mean squared error (MSE) between the model's outputted demographic voting probabilities (DVP) and the DVP that generated the election data, stored in the \texttt{Election} objects. The MSE is averaged over all $5$ trials of the experiment. The lower the MSE, the more accurate the model. The ``runtime" of the model is how long, in seconds, the model took to generate its output. The lower the runtime, the faster the model.
 
-Tables \ref{table:rwm_expec_2d} to \ref{table:hmc_3d} summarize the results of running the Discrete Voter Model and King's Ecological Inference method on all of the experiments, for a total of $66$ experiments replicated $5$ times each.
+Tables \ref{table:rwm_expec_2d} to \ref{table:hmc_3d} summarize the results of running the Discrete Voter Model and King's Ecological Inference method on all of the experiments, for a total of $66$ experiments replicated $5$ times each. Each sample had a burn-in fraction of $0.3$. HMC configurations had a step size adaptation fraction of $0.6$.
+
+A select number of figures, comparing the performance of different experiment configurations on the same election in the $2 \times 2$ and $3 \times 2$ cases, are shown in Subsections \ref{subsec:comp_config_2x2} and \ref{subsec:comp_config_3x2}. Other such figures for all elections can be found in the \hyperref[chap:appendix]{Appendix}.
 
 In each table, $g$ is the granularity of the probability hypercube, and $t$ is the number of steps.
 
-The experiments were conducted in Python 3.7.4 on a 2018 MacBook Pro with a 2.3 GHz Quad-Core Intel Core i5 processor, 16 GB of 2133 MHz LPDDR3 RAM, and a Intel Iris Plus Graphics 655 1536 MB graphics card. All numbers are given with $3$ significant figures of precision.
+The experiments were conducted in Python 3.7.4 on a 2018 MacBook Pro with a 2.3 GHz Quad-Core Intel Core i5 processor, 16 GB of 2133 MHz LPDDR3 RAM, and a Intel Iris Plus Graphics 655 1536 MB graphics card. All numbers are given with $4$ decimal places of precision.
 
 \subsection{Random Walk Metropolis in the $2 \times 2$ Case}
 
@@ -205,20 +205,47 @@ The experiments were conducted in Python 3.7.4 on a 2018 MacBook Pro with a 2.3 
 \end{table}
 
 
-In addition to the presentation of the numeric evaluation, a presentation of select visualizations of the models produced by the Discrete Voter Model show its expressive power.
-
-Figure \ref{fig:2d_viz} shows the distribution of probability over the $2$D hypercube for a model in the $2 \times 2$ case. The figure is $3$-dimensional, with the third dimension being the probability of being in one of the cells of the hypercube. This is multinomial and much more expressive of possible outcomes.
+\FloatBarrier
+\subsection{Comparing the Configurations in the $2 \times 2$ Case}
+\label{subsec:comp_config_2x2}
 
 \begin{figure}[ht]\centering
- \includegraphics[width=\linewidth]{figures/2d_viz.png}
- \caption{Distribution of Probability over the 2D Hypercube for a Model in the $2 \times 2$ Case}
- \label{fig:2d_viz}
+ \includegraphics[width=\linewidth]{figures/1_1_time.png}
+ \caption{Runtime of the Configurations on the $d_1 \times v_1$ Election}
+ \label{fig:1_1_time}
 \end{figure}
 
-Figure \ref{fig:3d_viz} shows the distribution of probability over the $2$D hypercube for a model in the $3 \times 2$ case. Since there are $3$ dimensions for demographic groups, Figure \ref{fig:3d_viz} presents the fourth dimension, probability, as directed arrows across a cross section of the dimensions. The colors of these arrows give the corresponding probability.
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/1_1_mean_mse.png}
+ \caption{MSE of the Mean PHC of the Configurations' DVM on the $d_1 \times v_1$ Election}
+ \label{fig:1_1_mean_mse}
+\end{figure}
 
 \begin{figure}[ht]\centering
- \includegraphics[width=\linewidth]{figures/3d_viz.png}
- \caption{Distribution of Probability over the 3D Hypercube for a Model in the $3 \times 2$ Case}
- \label{fig:3d_viz}
+ \includegraphics[width=\linewidth]{figures/1_1_mle_mse.png}
+ \caption{MSE of the MLE of the Configurations' DVM on the $d_1 \times v_1$ Election}
+ \label{fig:1_1_mle_mse}
+\end{figure}
+
+
+\FloatBarrier
+\subsection{Comparing the Configurations in the $3 \times 2$ Case}
+\label{subsec:comp_config_3x2}
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/4_4_time.png}
+ \caption{Runtime of the Configurations on the $d_4 \times v_4$ Election}
+ \label{fig:4_4_time}
+\end{figure}
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/4_4_mean_mse.png}
+ \caption{MSE of the Mean PHC of the Configurations' DVM on the $d_4 \times v_4$ Election}
+ \label{fig:4_4_mean_mse}
+\end{figure}
+
+\begin{figure}[ht]\centering
+ \includegraphics[width=\linewidth]{figures/4_4_mle_mse.png}
+ \caption{MSE of the MLE of the Configurations' DVM on the $d_4 \times v_4$ Election}
+ \label{fig:4_4_mle_mse}
 \end{figure}
