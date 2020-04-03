@@ -1,7 +1,7 @@
 %!TEX root = ../thesis.tex
 \begin{savequote}[75mm]
-This is some random quote to start off the chapter.
-\qauthor{Firstname lastname}
+  We should forget about small efficiencies, say about 97\% of the time: premature optimization is the root of all evil. Yet we should not pass up our opportunities in that critical 3\%.
+\qauthor{Dr. Donald Knuth}
 \end{savequote}
 
 \chapter{Methods}
@@ -18,7 +18,7 @@ The Discrete Voter Model is implemented in Python 3, and the accompanying code i
 
 The modules work together to run the Discrete Voter Model on an \texttt{Election} object to generate a distribution of probabilistic hypercubes for the election. Each probabilistic hypercube encodes a probability distribution within a potential precinct of the district, and is used to extract the likely demographic voting probabilities.
 
-These demographic voting probabilities are the goal of the ecological inference, and provide information to answer whether voting in an election is polarized by race.
+These demographic voting probabilities are the goal of ecological inference, and provide information to answer whether voting in an election is polarized by race.
 
 \section{phc}
 \label{sec:phc}
@@ -113,7 +113,9 @@ $$x = \Vert \mathbb{E}(PHC) - v \Vert_1$$
   \label{eq:asymptote}
 \end{equation}
 
-The more negative the value of $f(x)$, the less likely the PHC is to be able to generate the outcome of the election and be accepted in the Markov chain.
+The computation above is repeated for every precinct in an election. Let $X$ be the vector $\{x_i\}_{i=0}^p$ where $p$ is the number of precincts. $f$ is then applied to $X$, and the average of that quantity, $\overline{f(X)}$, is the score of the PHC.
+
+The more negative the value of $\overline{f(X)}$, the less likely the PHC is to be able to generate the outcome of the election and be accepted in the Markov chain.
 
 
 \section{prob\_votes}
@@ -158,7 +160,11 @@ Integer partitioning can be computationally expensive. The time complexity of mo
 
 The full code for this partitioning process can be found in the appendix, either in the full repository or as Listing \ref{lst:integer_partition}.
 
-The partitions are used to calculate the probability, as shown in Equation \ref{eq:prob_votes}. That probability is that of some candidate's and precinct's hypercube producing the observed electoral outcome. \texttt{prob\_votes} uses this to calculate the log-probability. The more negative that value, the less likely the PHC generated the outcome of the election and is accepted in the Markov chain. This scoring method is more intuitive and perhaps more precise, but it is much more computationally expensive. The calculations of large products, exponents, and especially factorials makes this much slower than scoring by expectation with \texttt{expec\_votes}.
+The partitions are used to calculate the probability, as shown in Equation \ref{eq:prob_votes}. That probability is that of some candidate's and precinct's hypercube producing the observed electoral outcome in a precinct. \texttt{prob\_votes} uses this to calculate the log-probability.
+
+Like with \texttt{expec\_votes}, the computation is repeated for every precinct in an election, then averaged over all precincts. The more negative that value, the less likely the PHC generated the outcome of the election and is accepted in the Markov chain.
+
+This scoring method is more intuitive and perhaps more precise, but it is much more computationally expensive. The calculations of large products, exponents, and especially factorials makes this much slower than scoring by expectation with \texttt{expec\_votes}.
 
 \section{elect}
 \label{sec:elect}

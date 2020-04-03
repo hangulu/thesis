@@ -1,5 +1,6 @@
 from itertools import chain, permutations
 
+
 def integer_partition(n, k, min_size=0):
     """
     Partition an integer.
@@ -20,6 +21,7 @@ def integer_partition(n, k, min_size=0):
     for i in range(min_size, n // k + 1):
         for result in integer_partition(n - i, k - 1, i):
             yield (i,) + result
+
 
 def permute_integer_partition(n, k, min_size=0):
     """

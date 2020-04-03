@@ -276,11 +276,11 @@ tabsize=2, % Number of spaces per tab in the code
 	\Huge \textcolor{SchoolColor}{\thetitle} \normalsize \\
 	\vspace{100pt}
 	\textsc{a thesis presented \\ by\\
-	\theauthor\\ to\\ The Department of \@department\\
+	\theauthor\\ to\\ The Departments of \@department\\
 	\vspace{12pt}
 	in partial fulfillment of the requirements\\
 	for the degree of\\ \@degree\\
-	in the subject of\\ \@field\\
+	in the subjects of\\ \@field\\
 	\vspace{12pt}
 	\@university\\ \@universitycity, \@universitystate\\
 	\@degreemonth\ \@degreeyear}
@@ -351,12 +351,21 @@ tabsize=2, % Number of spaces per tab in the code
     \begin{appendices}
         \include{chapters/appendixA}
     \end{appendices}
-    \input{endmatter/personalize}
     \clearpage
     \begin{spacing}{\dcompressedspacing}
         \bibliography{references}
         \addcontentsline{toc}{chapter}{References}
-        \bibliographystyle{apalike2}
-        \include{endmatter/colophon}
+        \bibliographystyle{abbrv}
     \end{spacing}
+    \clearpage
+    \null
+    \vfill
+    \begin{figure}[ht]\centering
+       \includegraphics[width=0.1\linewidth]{figures/signature.png}
+    \end{figure}
+    \begin{center}
+      Hakeem Olakunle Isa Angulu
+    \end{center}
+    \vfill
+    \clearpage
 }

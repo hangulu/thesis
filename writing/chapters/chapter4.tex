@@ -1,7 +1,7 @@
 %!TEX root = ../thesis.tex
 \begin{savequote}[75mm]
-Nulla facilisi. In vel sem. Morbi id urna in diam dignissim feugiat. Proin molestie tortor eu velit. Aliquam erat volutpat. Nullam ultrices, diam tempus vulputate egestas, eros pede varius leo.
-\qauthor{Quoteauthor Lastname}
+The work of the political activist inevitably involves a certain tension between the requirement that position be taken on current issues as they arise and the desire that one's contributions will somehow survive the ravages of time.
+\qauthor{Dr. Angela Davis}
 \end{savequote}
 
 \chapter{Discussion}
@@ -80,7 +80,7 @@ Hence, scoring by expectation should almost always be preferred when using the D
 
 With that said, the experiments conducted suggest that using the Random Walk Metropolis kernel, scoring by expectation, and running the model for a large number of steps on moderately-sized probability hypercubes generally produces better samples of the true distribution, and more accurate results.
 
-That configuration was employed on the case studies from Chicago presented in Section {sec:chi}.
+That configuration was employed on the case studies from Chicago presented in Section \ref{sec:chicago}.
 
 
 \section{Case Studies: Chicago 2015 and 2019 Mayoral Runoffs}
@@ -166,7 +166,7 @@ Figures \ref{fig:cm_2015_mean_phc} to \ref{fig:cm_2019_mle_phc} illustrate the m
 
 The concentration of probability at the edges suggests that there is at least some racial voting polarization, but that it is not unreasonably dominant. For example, Figure \ref{fig:cm_2019_mean_phc}, the mean PHC for Lori Lightfoot in the 2019 Chicago Mayoral runoff election, shows that there is a relatively high probability that she was quite popular with Hispanic and Black voters, which does match anecdotal evidence.\cite{negocios}.
 
-These probabilistic hypercubes can then be used with precinct data to choose some demographic voting probability. For example, using the PHC represented in \ref{cm_2019_mean_phc}, one can supply a ward, say ward $1$, and find that a likely set of demographic voting probabilities for that ward is that $\approx 90\%$ of Black voters,$\approx 55\%$ of Hispanic voters, and $\approx 25\%$ of white voters preferred Lori Lightfoot over Toni Preckwinkle. Those numbers, inferred with the Discrete Voter Model, are the unknowns in the ecological inference problem. Black and Hispanic voters seem to prefer this candidate, so there is some racial voting polarization. While these results are the outcome of a probabilistic process, and thus inherently non-deterministic, the experiment and case study are quite repeatable. Not only do they yield similar results, but they also yield similar probability hypercube distributions. The PHC object can thus express more about the Chicagoan electoral landscape than ever before.
+These probabilistic hypercubes can then be used with precinct data to choose some demographic voting probability. For example, using the PHC represented in Figure \ref{fig:cm_2019_mean_phc}, one can supply a ward, say ward $1$, and find that a likely set of demographic voting probabilities for that ward is that $\approx 90\%$ of Black voters,$\approx 55\%$ of Hispanic voters, and $\approx 25\%$ of white voters preferred Lori Lightfoot over Toni Preckwinkle. Those numbers, inferred with the Discrete Voter Model, are the unknowns in the ecological inference problem. Black and Hispanic voters seem to prefer this candidate, so there is some racial voting polarization. While these results are the outcome of a probabilistic process, and thus inherently non-deterministic, the experiment and case study are quite repeatable. Not only do they yield similar results, but they also yield similar probability hypercube distributions. The PHC object can thus express more about the Chicagoan electoral landscape than ever before.
 
 
 \section{Implications}
