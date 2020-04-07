@@ -3,6 +3,8 @@
 
 Hakeem Angulu's undergraduate thesis for the departments of Computer Science and Statistics at Harvard College. The PDF version can be found [here](writing/thesis.pdf).
 
+The [PyPI](https://pypi.org/) package for this work can be found and installed [here](https://github.com/hangulu/dvm).
+
 Section 2 of the Voting Rights Act of 1965 (VRA) prohibits voting practices or procedures that discriminate based on race, color, or membership in a language minority group, and is often cited by plaintiffs seeking to challenge racially-gerrymandered districts in court.
 
 In 1986, with Thornburg v. Gingles, the Supreme Court held that in order for a plaintiff to prevail on a section 2 claim, they must show that:
