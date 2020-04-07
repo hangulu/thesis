@@ -1,7 +1,7 @@
 ## The Voting Power Gap
 ### Identifying Racial Gerrymandering with a Discrete Voter Model
 
-Hakeem Angulu's undergraduate thesis for the departments of Computer Science and Statistics at Harvard College.
+Hakeem Angulu's undergraduate thesis for the departments of Computer Science and Statistics at Harvard College. The PDF version can be found [here](writing/thesis.pdf).
 
 Section 2 of the Voting Rights Act of 1965 (VRA) prohibits voting practices or procedures that discriminate based on race, color, or membership in a language minority group, and is often cited by plaintiffs seeking to challenge racially-gerrymandered districts in court.
 
